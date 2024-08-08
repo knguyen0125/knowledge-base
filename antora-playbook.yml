@@ -11,7 +11,18 @@ ui:
   bundle:
     url: ./ui/dist
     snapshot: true
+  supplemental_files:
+    - path: ui.yml
+      contents: |
+        static_files:
+        - .nojekyll
+    - path: .nojekyll
 output:
   dir: dist/
 asciidoc:
   sourcemap: true
+  extensions:
+    - asciidoctor-kroki
+antora:
+  extensions:
+    - require: '@antora/lunr-extension'

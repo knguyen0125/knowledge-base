@@ -1,0 +1,9 @@
+= RabbitMQ
+
+RabbitMQ is a xref:messaging.adoc[message broker] that allows you to send and receive messages between distributed systems. It is a popular choice for building scalable and reliable systems.
+
+== Producer confirms
+
+Producer confirms are a feature of RabbitMQ that allows you to confirm that a message has been successfully published to a queue. This feature is useful for ensuring that messages are not lost during the publishing process.
+
+* xref:rabbitmq_perf_test.adoc[]

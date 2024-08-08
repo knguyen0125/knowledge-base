@@ -1,0 +1,9 @@
+= RedHat Enterprise Linux
+
+RedHat Enterprise Linux is an enterprise Linux operating system
+
+== Red Hat Enterprise Linux
+
+=== Overview
+
+* xref:redhat_certified_system_administrator.adoc[]

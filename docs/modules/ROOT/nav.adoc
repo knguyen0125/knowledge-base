@@ -1,3 +1,43 @@
-* xref:00_index.adoc[Home]
-* xref:01_rabbitmq.adoc[RabbitMQ]
-* xref:02_postgresql.adoc[PostgreSQL]
+* xref:messaging.adoc[]
+** xref:rabbitmq.adoc[]
+*** xref:rabbitmq_perf_test.adoc[]
+** AWS SNS
+** AWS SQS
+
+* xref:database.adoc[]
+** xref:postgresql.adoc[]
+** xref:redis.adoc[]
+** xref:aws_dynamodb.adoc[]
+** AWS Redshift
+
+* Linux
+** xref:redhat_enterprise_linux.adoc[]
+*** xref:redhat_certified_system_administrator.adoc[]
+*** RedHat Certified Engineer
+*** RedHat Certified Architect
+** xref:tmux.adoc[]
+
+* Observability
+** xref:grafana.adoc[]
+** xref:prometheus.adoc[]
+*** Grafana Mimir
+** Grafana Loki
+** Grafana Tempo
+** OpenTelemetry
+
+* Automation
+** xref:ansible.adoc[]
+** Terraform
+*** Terragrunt
+
+* Orchestration Platform
+** xref:kubernetes.adoc[]
+** RedHat OpenShift
+** AWS ECS
+** HashiCorp Nomad
+
+* Networking & Content Delivery
+** NGINX
+** AWS WAF
+** AWS Elastic Load Balancing
+** AWS CloudFront

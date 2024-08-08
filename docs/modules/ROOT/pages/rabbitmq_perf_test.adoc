@@ -1,0 +1,20 @@
+= RabbitMQ Performance Testing
+
+* https://perftest.rabbitmq.com/[RabbitMQ PerfTest]
+
+== Basic usage
+
+[,bash]
+----
+java -jar perf-test.jar \
+  --uri amqp://guest:guest@localhost:5672 \ # <.>
+  --queue test \ # <.>
+  --size 100 \ # <.>
+  --producers 1 \ # <.>
+  --consumers 1 # <.>
+----
+<.> The URI of the RabbitMQ server.
+<.> The name of the queue.
+<.> The size of the message.
+<.> The number of producers.
+<.> The number of consumers.

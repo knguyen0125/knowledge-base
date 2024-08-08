@@ -20,14 +20,16 @@ function buildDocs() {
 }
 exports.buildDocs = buildDocs;
 
-function build () {
+function build() {
   return gulp.series(buildUi, buildDocs);
 }
 exports.build = build;
 
 function watchBuild() {
   browserSync.init({
-    server: './dist'
+    server: './dist',
+    // Remove the "Connected to BrowserSync" message in the console
+    notify: false
   })
 
   gulp.watch('ui/src/**/*', buildUi);
@@ -37,4 +39,4 @@ function watchBuild() {
   gulp.watch('dist/**/*').on('change', browserSync.reload)
 }
 exports.watchBuild = watchBuild;
-exports.develop = gulp.series(build, watchBuild)
+exports.develop = gulp.series(buildUi, buildDocs, watchBuild)

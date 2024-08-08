@@ -1,0 +1,7 @@
+= RedHat Ansible
+
+Ansible is a configuration management tool.
+
+== References
+
+* https://docs.ansible.com/ansible/latest/index.html[Ansible Documentation]

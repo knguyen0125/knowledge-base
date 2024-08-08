@@ -1,0 +1,16 @@
+= Messaging (Message Queue)
+
+Messaging is a technology that allows applications to communicate with each other by sending messages.
+
+== Technologies
+
+* Apache Kafka
+* xref:rabbitmq.adoc[RabbitMQ]
+* Apache Pulsar
+* Apache ActiveMQ
+* AWS SNS
+* AWS SQS
+* Google Cloud Pub/Sub
+
+[sidebar]
+Kafka technically is a distributed __streaming__ platform, but it can also be used for messaging purpose.
