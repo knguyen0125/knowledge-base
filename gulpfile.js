@@ -23,7 +23,7 @@ exports.buildDocs = buildDocs;
 function build() {
   return gulp.series(buildUi, buildDocs);
 }
-exports.build = build;
+exports.build = gulp.series(buildUi, buildDocs);
 
 function watchBuild() {
   browserSync.init({
