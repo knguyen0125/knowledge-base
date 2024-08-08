@@ -1,0 +1,18 @@
+site:
+  title: Kien's Knowledge Base
+  url: http://localhost:3000
+  start_page: knowledge_base::00_index.adoc
+content:
+  sources:
+    - url: ./
+      start_path: docs
+      branches: [HEAD]
+ui:
+  bundle:
+    url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/HEAD/raw/build/ui-bundle.zip?job=bundle-stable
+    snapshot: true
+  supplemental_files: ./ui
+output:
+  dir: dist/
+asciidoc:
+  sourcemap: true
