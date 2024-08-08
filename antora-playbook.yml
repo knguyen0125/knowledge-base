@@ -9,7 +9,7 @@ content:
       branches: [HEAD]
 ui:
   bundle:
-    url: ./ui
+    url: ./ui/dist
     snapshot: true
 output:
   dir: dist/

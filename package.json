@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "gulp develop"
   },
   "keywords": [],
   "author": "",
@@ -11,10 +11,9 @@
   "description": "",
   "devDependencies": {
     "antora": "3.1.9",
-    "gulp": "^5.0.0",
-    "gulp-livereload": "^4.0.2"
+    "browser-sync": "^3.0.2",
+    "gulp": "^5.0.0"
   },
   "dependencies": {
-    "browser-sync": "^3.0.2"
   }
 }

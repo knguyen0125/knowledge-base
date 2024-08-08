@@ -1,13 +1,27 @@
-const { watch } = require('gulp')
+const gulp = require('gulp')
 const child = require('child_process');
-const livereload = require('gulp-livereload')
 const browserSync = require('browser-sync').create()
 
-function build(cb) {
-  const antora = child.spawn('npx', ['antora', 'generate', 'antora-playbook.yml']);
-  antora.stdout.on('data', buffer => console.log(buffer.toString()))
-  antora.stderr.on('data', buffer => console.log(buffer.toString()))
-  antora.on('close', () => cb());
+/**
+ * Build the UI
+ */
+function buildUi() {
+  return gulp.src('ui/src/**/*').pipe(gulp.dest('ui/dist'));
+}
+exports.buildUi = buildUi;
+
+/**
+ * Build the documentation site using Antora
+ *
+ * @returns {ChildProcess}
+ */
+function buildDocs() {
+  return child.exec('npx antora generate antora-playbook.yml');
+}
+exports.buildDocs = buildDocs;
+
+function build () {
+  return gulp.series(buildUi, buildDocs);
 }
 exports.build = build;
 
@@ -16,8 +30,11 @@ function watchBuild() {
     server: './dist'
   })
 
-  watch(['docs/**/*', 'ui/**/*', 'antora-playbook.yml'], { ignoreInitial: false }, build)
+  gulp.watch('ui/src/**/*', buildUi);
 
-  watch('dist/**/*', { ignoreInitial: false }).on('change', browserSync.reload)
+  gulp.watch(['docs/**/*', 'ui/dist/**/*', 'antora-playbook.yml'], buildDocs)
+
+  gulp.watch('dist/**/*').on('change', browserSync.reload)
 }
 exports.watchBuild = watchBuild;
+exports.develop = gulp.series(build, watchBuild)
