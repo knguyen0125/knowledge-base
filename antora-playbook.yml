@@ -1,6 +1,6 @@
 site:
   title: Kien's Knowledge Base
-  url: http://localhost:3000
+  url: /
   start_page: knowledge_base::00_index.adoc
 content:
   sources:

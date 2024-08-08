@@ -20,10 +20,16 @@ function buildDocs() {
 }
 exports.buildDocs = buildDocs;
 
+function buildDocsProd() {
+  return child.exec('npx antora generate antora-playbook.yml');
+}
+exports.buildDocsProd = buildDocsProd;
+
 function build() {
   return gulp.series(buildUi, buildDocs);
 }
 exports.build = gulp.series(buildUi, buildDocs);
+exports.buildProd = gulp.series(buildUi, buildDocsProd);
 
 function watchBuild() {
   browserSync.init({
