@@ -1,0 +1,32 @@
+= AWS Transit Gateway
+
+AWS Transit Gateway connects xref:aws_virtual_private_cloud.adoc[]s and on-premise networks through a central hub, replacing complex VPC peering relationships.
+AWS Transit Gateway reduces complexity in a multi-account environment where multiple xref:aws_virtual_private_cloud.adoc[]s connect together.
+
+Without Transit Gateway
+
+image::Without AWS Transit Gateway.png[]
+
+With Transit Gateway
+
+image::With AWS Transit Gateway.png[]
+
+AWS Transit Gateway Network Manager can be used to provide a single, global view of private network to help reduce complexity of managing a global network across AWS and on-premise.
+
+== Concepts
+
+* Attachments: AWS Transit Gateway can be attached to the following
+** One or more xref:aws_virtual_private_cloud.adoc[]s
+** A Connect third-party virtual appliance (such as SD-WAN appliance)
+** An xref:aws_directconnect.adoc[] gateway
+** A peering connection with another AWS Transit Gateway
+** A xref:aws_site_to_site_vpn.adoc[] connection to a transit gateway
+* Transit gateway Maximum Transmission Unit: Transit gateway supports an MTU of 8500 bytes for most traffic, and 1500 for traffic over xref:aws_site_to_site_vpn.adoc[] connection
+* Transit gateway Route Table: A transit gateway has a default route table and optionally additional route tables.
+A route table includes dynamic and static routes.
+* Association: Each attachment is associated with exactly one route table
+* Route propagation: A xref:aws_virtual_private_cloud.adoc[], xref:aws_site_to_site_vpn.adoc[] connection or xref:aws_directconnect.adoc[] gateway can dynamically propagate routes to a transit gateway route table.
+
+=== References
+
+* https://docs.aws.amazon.com/whitepapers/latest/building-scalable-secure-multi-vpc-network-infrastructure/welcome.html[Building a Scalable and Secure Multi-VPC AWS Network Infrastructure]

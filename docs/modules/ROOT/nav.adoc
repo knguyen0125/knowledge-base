@@ -34,6 +34,7 @@
 ** xref:ansible.adoc[]
 ** Terraform
 *** Terragrunt
+** xref:aws_cloudformation.adoc[]
 
 * Analytics
 ** xref:apache_hive.adoc[]
@@ -81,3 +82,4 @@
 ** xref:aws_config.adoc[]
 ** xref:aws_backup.adoc[]
 ** xref:aws_directconnect.adoc[]
+** xref:aws_transit_gateway.adoc[]

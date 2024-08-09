@@ -1,0 +1,12 @@
+= AWS Global Accelerator
+
+AWS Global Accelarator is a networking service that improves performance
+of users’ traffic by up to 60% using AWS global network infrastructure.
+AWS Global Accelerator provides 2 static anycast IPs.
+
+Use cases of AWS Global Accelerator includes:
+
+* Improve latency for single region applications
+* Simplify multi-region applications by giving you single entry point to
+application regardless of Regions
+* Improve availability and resilience of application through xref:aws_shield.adoc[]
