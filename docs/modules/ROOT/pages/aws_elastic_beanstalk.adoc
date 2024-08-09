@@ -1,0 +1,54 @@
+= AWS Elastic Beanstalk
+
+AWS Elastic Beanstalk is a Platform-as-a-Service offering from AWS
+to quickly deploy and manage application in AWS without having to learn
+about the infrastructure of those applications. AWS Elastic
+Beanstalk handles the provisioning (using AWS CloudFormation), load balancing (using xref:aws_elastic_load_balancing.adoc[]),
+scaling, and application health monitoring. Additionally, for
+Multi-container application, AWS Elastic Beanstalk also uses
+xref:aws_elastic_container_service.adoc[] for orchestration.
+
+== Concepts
+
+* Application: a logical collection of Elastic Beanstalk components
+* Application version: refers to a specific, labelled iteration of
+application. An application points to an AWS Simple Storage
+Service|S3 object that contains the deployable code. Applications can
+have many versions, and each version is unique.
+* Environment: collection of AWS resources running an application
+version.
+* Environment tier: the type of application that the environment runs,
+which can either be
+** Web server environment tier: an application that serves HTTP requests
+** Worker environment tier: an application that pulls tasks from an
+xref:aws_simple_queue_service.adoc[SQS] queue
+* Environment configuration: a collection of parameters and settings
+that defines how an environment and its associated resources behaves.
+* Saved configuration: a template that you can use as a starting point
+for creating unique environment configurations.
+* Platform: a combination of operating system, programming language
+runtime, web server, application server, and Elastic Beanstalk
+components.
+
+== Deployment policy
+
+* All at once: quickest deployment method, but with short loss of
+service.
+* Rolling: avoid downtime by deploying application to a subset of
+instances. Most bandwidth is retained
+* Rolling with additional batch: Elastic Beanstalk launches and extra
+batch of instances, and then perform a rolling deployment
+* Immutable: ensures new version of application is deployed to new
+instances, instead of updating existing instances
+* Traffic splitting: canary testing
+* Blue/green deployment: deploy application to a separate environment,
+and then swap the CNAME of environment to redirect traffic to the new
+version instantly
+
+== Environment links
+
+As application grows, we might want to split it into components that
+have different development and operational lifecycles. Environment link
+can be used to set environment variable to the URL of web application or
+Queue URL for worker environment so that environments can communicate
+with each other.

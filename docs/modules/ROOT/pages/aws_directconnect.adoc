@@ -1,0 +1,80 @@
+= AWS DirectConnect
+
+AWS Direct Connect links internal network to an AWS Direct Connect location over standard fiber-optic cable.
+With the connection, you can create a *virtual interface* directly to public AWS services or to VPC
+
+1Gbps and 10Gbps ports are available.
+Support hosted connection of 1, 2, 5, or 10 Gbps.
+
+Amazon Direct Connect also supports AWS Transit Gateway
+
+Use cases:
+
+* Transferring large data sets
+* Developing and using applications that use real-time data feeds
+* Building hybrid environments that satisfy requirements
+
+== Setting up methods
+
+[cols="2",options="header",]
+|===
+|Port speed |Method
+
+|10 Gbps or higher
+|Connect directly to AWS device from router
+
+|1 Gbps or higher
+|Work with partner
+
+|Less than 1 Gbps
+|Work with partner to create a hosted connection
+|===
+
+To access public resources in a remote region, you must set up a public virtual interface and establish a Border Gateway Protocol session
+
+To provide failover, request and configure 2 dedicated connections to AWS.
+These connections can terminate on one or 2 routers on network.
+Configuration choices:
+
+* Active/Active (BRP multipath): Default configuration, where both connections are active
+* Active/Passive (failover): One connection is handling traffic, the other is on standby
+
+Autonomous System numbers (ASN): Identify networks that presents a clearly defined external routing policy to the internet
+
+== Cross connects
+
+* After you downloaded your Letter of Authorization and Connecting Facility Assignment (LOA-CFA), you must complete your cross-network connection (known as cross connect)
+
+== Virtual interfaces
+
+* You can configure multiple virtual interfaces on a single AWS Direct Connect connection (one private virtual interface for each VPC, or use AWS Direct Connect gateway)
+* Prerequisites
+** Connection: Direct Connect connection or link aggregation group
+** Virtual interface name
+** Virtual interface owner
+** VLAN: Unique VLAN tag that is not already in use for connection
+** Address family (IPv4 or v6)
+** Peer IP address: A virtual interface can support a BGP peering session for IPv4, IPv6 or dual-stack.
+Cannot create multiple BGP peering session for the same IP addressing family
+** BGP information: Public or private BGP ASN for your side of BGP session, and an MD5 BGP authentication key
+* MTU of a virtual private interface can either be 1500 or 9001 (jumbo frames).
+MTU of transit virtual interface for VPC Transit Gateways associated with Direct Connect gateways can be either 1500 or 8500 (Jumbo frames).
+Public virtual interface doesn’t support jumbo frames
+* Jumbo frames are supported on virtual private interfaces attached to virtual private gateway or a Direct Connect gateway.
+Jumbo frames apply only to propagated routes from Direct Connect.
+
+== Link Aggregation Group
+
+* A logical interface that uses Link Aggregation Protocol to aggregate multiple connections at a single Direct Connect endpoint, allowing you to treat them as a single, managed connection.
+* All connections in the LAG must use the same bandwidth
+* You can have a maximum of 4 connections in a LAG.
+* All connections in the LAG must terminate at the same Direct Connect endpoint
+* All connections in a LAG operate in Active/Active mode
+* In only available for dedicated 1G or 10G connections
+
+== Direct Connect Gateways
+
+* Use Direct Connect Gateway to connect your Direct Connect connection over private virtual interface to one or more VPCs in your account that are located in same or different Regions
+* Globally available resource
+* You can associate up to 10 VPCs from multiple accounts with a Direct Connect gateway.
+All VPCs must be owned by the same AWS account

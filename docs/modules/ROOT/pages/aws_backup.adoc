@@ -1,0 +1,26 @@
+= AWS Backup
+
+AWS Backup is a fully managed backup service that centralizes data
+protection across AWS services. AWS Backup supports the following
+resources:
+
+* xref:aws_elastic_compute_cloud.adoc[] instances
+* xref:aws_simple_storage_service.adoc[] data
+* xref:aws_elastic_block_store.adoc[] volumes
+* xref:aws_dynamodb.adoc[] tables
+* xref:amazon_relational_database_service.adoc[] databases.
+* xref:amazon_aurora.adoc[] clusters
+* xref:aws_elastic_file_system.adoc[] file systems
+* Amazon FSx for Lustre file systems
+* Amazon FSx for Window File Server file systems
+* AWS Storage Gateway volumes
+* Amazon DocumentDB clusters
+* Amazon Neptune clusters
+
+Concepts
+
+* Vault: a container that stores and organizers backups. When creating a
+backup vault, you must specify a xref:aws_key_management_system.adoc[KMS]
+encryption key that encrypts some of the backups placed in this vault.
+* Backup Plan: a policy expression that defines when and how you want to
+back up AWS resources. AWS Backup stores periodic backups incrementally.

@@ -51,6 +51,7 @@
 ** RedHat OpenShift
 ** xref:aws_elastic_container_service.adoc[]
 ** HashiCorp Nomad
+** xref:aws_elastic_beanstalk.adoc[]
 
 * Networking & Content Delivery
 ** NGINX
@@ -78,3 +79,5 @@
 ** xref:aws_elastic_file_system.adoc[]
 ** xref:aws_simple_storage_service.adoc[]
 ** xref:aws_config.adoc[]
+** xref:aws_backup.adoc[]
+** xref:aws_directconnect.adoc[]
