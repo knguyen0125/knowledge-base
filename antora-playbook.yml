@@ -2,6 +2,7 @@ site:
   title: Kien's Knowledge Base
   url: /
   start_page: knowledge_base::00_index.adoc
+  robots: disallow
 content:
   sources:
     - url: ./
@@ -12,6 +13,7 @@ ui:
     url: ./ui/dist
     snapshot: true
   supplemental_files:
+    # Copy the .nojekyll file to the root of the output directory
     - path: ui.yml
       contents: |
         static_files:

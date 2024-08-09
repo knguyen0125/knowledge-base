@@ -1,0 +1,44 @@
+= AWS Auto Scaling
+
+AWS Auto Scaling enables automatic scaling of scalable resources using xref:#_scaling_plan[], which uses dynamic scaling and predictive scaling to automatically scale application's resources.
+
+AWS Auto Scaling is useful for applications that experience daily or weekly variations in traffic flow.
+
+AWS Auto Scaling works with the following services:
+
+* xref:aws_elastic_compute_cloud.adoc[] Auto Scaling Groups
+* xref:aws_elastic_compute_cloud.adoc[] Spot Fleet
+* xref:aws_elastic_container_service.adoc[]
+* xref:aws_dynamodb.adoc[]
+* xref:amazon_aurora.adoc[]
+
+AWS Auto Scaling works with xref:#_dynamic_scaling[] and xref:#_predictive_scaling[]
+
+[#_scaling_plan]
+== Scaling Plan
+
+Scaling plan is a set of instructions for scaling resources.
+
+Scaling plan can scale based on:
+
+* Availability: Maintain resource utilization at 40 percent
+** Useful for urgent and unpredictable scaling needs
+* Balanced between availability and cost: Maintain resource utilization at 50 percent
+* Cost: Maintain resource utilization at 70 percent
+* Via custom metrics and thresholds.
+
+[#_dynamic_scaling]
+== Dynamic Scaling
+
+Dynamic Scaling creates a tracing scaling policies for the resources in xref:#_scaling_plan[]. The scaling policies adjust resource capacity in response to changes in resource utilization, with the intention to provide enough capacity to maintain utilization.
+
+image::AWS Auto Scaling Dynamic Scaling.png[]
+
+[#_predictive_scaling]
+== Predictive Scaling
+
+Predictive Scaling uses Machine Learning to analyze resource's historical workload and regularly forecasts the future load for the next two days.
+
+image::AWS Auto Scaling Predictive Scaling.png[]
+
+Currently, only xref:aws_elastic_compute_cloud.adoc[EC2] Auto Scaling Group supports predictive scaling

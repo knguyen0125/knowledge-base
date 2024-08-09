@@ -1,0 +1,7 @@
+= Amazon Machine Image
+
+An AMI provides information required to launch an instance, containing the following
+
+* One or more AWS Elastic Block Store|EBS snapshots or template for root volume of the instance
+* Launch permissions that controls which AWS accounts can use the AMI to launch instances
+* A block device mapping that specifies the volumes to attach to instance when it's launched

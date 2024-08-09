@@ -1,0 +1,19 @@
+= AWS Lambda
+
+AWS Lambda is a Serverless Function-as-a-Service (FaaS) that let customers run code without provisioning or managing servers. Customers only pay for compute time when there are code running.
+
+Under the hood, AWS Lambda (as a service) runs code in high availability compute infrastructure and performs administration of compute services, capacity provisioning and automatic scaling
+
+AWS Lambda compose code in Lambda functions. AWS Lambda only run the functions when needed and scales automatically.
+
+Currently, AWS Lambda natively supports Java, Go, PowerShell, Node.JS, C#g, Python, Ruby programming languages, with additional supports for other programming languages via Lambda custom runtime. AWS Lambda also supports OCI-compliant containers.
+
+Lambda scales functions based on concurrency and have an "all-function cumulative concurrency" limit. The initial burst limit is between 500 and 3000, depending on AWS Region|Region. Default regional limit is 1000 and can be increased.
+
+Lambda function can be configured to run in xref:aws_virtual_private_cloud.adoc[] to access resources such as Database, Cache instance or other internal services. AWS Lambda creates an Elastic Network Interface|ENI for each subnet in Lambda function VPC configuration.
+
+Lambda function can also mount an AWS Elastic File System (SEED)|EFS to a local directory to provide persistent, shared storage.
+
+Lambda function can be extended using Lambda extensions to augment Lambda functions such as Application Performance Monitoring|APM, Security or Governance.
+
+AWS Lambda integrates with other AWS services. Notable integration includes: Amazon API Gateway, xref:aws_dynamodb.adoc[], Amazon Simple Queue Service|SQS, AWS Simple Storage Service|S3, or with Amazon CloudFront via Lambda@Edge

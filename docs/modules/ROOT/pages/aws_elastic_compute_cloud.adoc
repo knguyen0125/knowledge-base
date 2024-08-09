@@ -1,0 +1,239 @@
+= AWS Elastic Compute Cloud
+:page-aliases: ec2, aws_ec2
+
+AWS Elastic Compute Cloud provides scalable computing capacity in AWS Cloud, using Virtual machines or **instances**.
+Each instance is spin up using pre-configured templates called xref:amazon_machine_image.adoc[] (AMIs).
+
+EC2 eliminates the needs to invest in hardware up front so that you can develop and deploy applications faster.
+
+Amazon EC2 is an Infrastructure-as-a-Service (IaaS), Availability Zone-resilient service.
+
+EC2 instances belongs in different EC2 Instance Families, which defines different **instance types** or configurations of CPU, memory, storage and networking capacity.
+
+Older EC2 instances are built with Paravirtualization technology, however, newer instances use xref:aws_nitro_system.adoc[] for virtualization.
+
+EC2 provides multiple block-level storage options such as AWS Elastic Block Store and Instance Store
+
+== EC2 Placement Group
+
+Placement group let you choose the logical placement of instances to optimize for communication, performance or durability
+
+=== Types of placement group
+
+==== Cluster placement group
+
+* Pack instances close together inside an AZs
+* Enables workloads to achieve low-latency necessary for tightly-coupled node-to-node communication
+* Well suited for HPC applications
+* Cannot be multi-AZs
+* If launch a new instance in a cluster placement group, it can cause insufficient capacity error
+
+==== Partition placement group
+
+* Spread instances across logical partitions
+* Each partition do not share the underlying hardware with others
+* Well suited for large distributed and replicated workloads (Kafka, Hadoop)
+* Cannot have more than 7 partitions per availability zone.
+* EC2 will try to evenly distribute instances across partitions
+* Partition placement group with dedicated instances can have maximum of 2
+* Partitions can be multi-AZs
+
+==== Spread placement group
+
+* Each instance is on a different rack (do not share underlying hardware with others)
+* Well suited for critical applications that should be kept separate from each other
+* Can spread max of 7 instances per availability zone
+* Is not supported for Dedicated Instances
+* Spread can be multi-AZs
+
+== EC2 Purchasing Options
+
+EC2 support multiple purchasing options to optimize cost based on needs:
+
+* On-Demand instances: Pay by the second for the instances
+* Saving Plans: Making a commitment amount of usage in USD per hour, for 1 or 3 years
+* Reserved Instance: Making commitment to a consistent instance configuration including instance type or region, for 1 or 3 years
+* Spot instances: Request unused EC2 instances.
+Trade interruption with steep discount
+* Dedicated Hosts: Pay for a physical host that is fully dedicated to running instance, bring existing per-socket, or per-VM licenses to reduce cost
+* Reserved Dedicated Host: Dedicated host with reserved capacity, with discount in exchange for commitment
+* Dedicated Instances: Pay, by the hour, for instances that run on single-tenant hardware
+* Reserved Dedicated Instances: Dedicated instances with reserved capacity, with discount in exchange for commitment
+* On-Demand Capacity Reservation: Reserve EC2 capacity in a specific AZ for any duration
+
+=== Reserved Instance comparison
+
+[%header,cols="s,2*"]
+|===
+|
+|Regional
+|Zonal
+
+| Reserve capacity
+| No
+| Yes
+
+| AZ Flexibility
+| Yes
+| No
+
+| Instance size flexibility
+| Yes (Linux only)
+| No
+
+| Queuing purchase
+| Yes
+| No
+|===
+
+[%header,cols="s,2*"]
+|===
+|
+| Standard
+| Convertible
+
+| Modify reserved instances
+| Some attributes
+| Some attributes
+
+| Exchanging RI
+| No
+| Yes
+
+| Selling RI in Marketplace
+| Yes
+| No
+
+| Buying RI in Marketplace
+| No
+| Yes
+|===
+
+== EC2 Instance Lifecycle
+
+[%header,cols="m,3*"]
+|===
+| State
+| Description
+| Billing
+| Notes
+
+| pending
+| Preparing to enter running state
+| Not billed
+|
+
+| running
+| Running
+| Billed
+|
+
+| stopping
+| Preparing to be stopped and stop-hibernated
+| Not billed if preparing to stop
+
+Billed if preparing to hibernate
+| EBS volume as root device only
+
+| stopped
+| Shutdown and cannot be used
+| Not billed
+| EBS volume as root device only.
+
+Instance retains private IPv4 address
+
+| `shutting-down`
+| Preparing to be terminated
+| Not billed
+|
+
+| `terminated`
+| Terminated and cannot be started
+| Not billed
+|
+|===
+
+=== Differences between reboot, stop, hibernate and terminate
+
+[%header,cols="s,4*"]
+|===
+| Characteristic | Reboot | Stop/Start | Hibernate | Terminate
+
+| Host computer
+| Stays on same host
+| New host
+| New host
+| None
+
+| Private and public IPv4
+| Same
+| Keep private, get new public
+| Keep private, get new public
+| None
+
+| Elastic IP
+| EIP remains associated
+| EIP remains associated
+| EIP remains associated
+| EIP is disassociated
+
+| IPv6 address
+| Stay the same
+| Stay the same
+| Stay the same
+| None
+
+| Instance Store volumes
+| Preserved
+| Erased
+| Erased
+| Erased
+
+| Root volume
+| Preserved
+| Preserved
+| Preserved
+| Deleted by default
+
+| RAM
+| Erased
+| Erased
+| Saved to a file
+| Erased
+
+| Billing
+| Billed
+| Not in `stopped` and `stopping`
+| Incurs charge in `stopping`, not billed in `stopped`
+| No charge in `shutting-down` and `terminated`
+|===
+
+== EC2 Networking
+
+=== Network bandwidth
+
+Network bandwidth available to EC2 instance depends on destination of traffic:
+
+* Inside instance's Region: Full bandwidth available to instance
+* Outside instance's Region: Aggregate bandwidth quota of 5 Gbps
+
+Single flow bandwidth is limited to 5 Gbps, regardless of direction of traffic.
+
+Available instance bandwidth depends on number of vCPU. Generally, instances with < 16 vCPU have baseline bandwidth and can spend network I/O credit to burst beyond baseline bandwidth.
+
+=== Enhanced Networking
+
+Enhanced networking use Single Root I/O Virtualization (SR-IOV) to provide high performance networking capabilities while lowering CPU utilization on supported instance types.
+
+Currently, there are 2 mechanisms for using enhanced networking:
+
+* Elastic Network Adapter (ENA)
+* Supports network speeds up to 100 Gbps for supported instance types
+* Current generation instances use ENA for enhanced networking, except for `c4`, `d2`, `m4` smaller than `m4.16xlarge`
+* Intel 82599 Virtual Function
+* Support network speeds up to 10 Gbps for supported instance types
+* The following instance types uses Intel 82599 VF for enhanced networking: c3, c4, c2, c2, c4 (excluding `m4.16xlarge`), and r3
+
+=== xref:aws_elastic_fabric_adapter.adoc[]
+
+Elastic Fabric Adapter provides low-latency, high-thoughput to select EC2 instance types, suitable for HPC applications

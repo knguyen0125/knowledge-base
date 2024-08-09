@@ -1,0 +1,151 @@
+= AWS Virtual Private Cloud
+
+AWS Virtual Private Cloud (VPC) creates private networks that private services will run from; connect AWS network to on-premise networks for hybrid cloud, or creating multi-cloud deployment
+
+A VPC is within 1 AWS account and 1 AWS Region (regionally resilient).
+Subnet of each VPC is AZ-resilient
+
+By default, VPC is private and isolated from other VPCs, other AWS zones and public internet
+
+== Concepts
+
+- Virtual Private Cloud (VPC): Virtual network dedicated to AWS account.
+- Types of VPC:
+- Default VPC (one per region): Initially created by AWS that has CIDR 172.31.0.0/16 and one default /20 subnet in each AZs.
+These subnets have public IP address assigned by default, and have internet gateway connected
+- Custom VPC: Private by default
+- Subnet: A range of IP addresses in VPC
+- Route Table: Set of rules (routes) used to determine where network traffic is directed
+- Internet Gateway: Gateway that attach to VPC to enable communication between resources in VPC and internet
+- VPC endpoint: Privately connect VPC to supported AWS services and VPC endpoint services enabled by AWS Private Link without requiring an internet gateway, NAT device, etc.
+- CIDR block: Classless Inter-Domain Routing
+
+== VPC and Subnet basic
+
+- VPC spans all Availability Zone|AZs in the AWS Region.
+- VPC can contain multiple subnets.
+Each subnet must be entirely within one AZ and cannot spans zones.
+- VPC has size between /28 (16 IP addresses) /16 (65,536 IP addresses).
+- Subnet can have size between /28 (16 IP addresses) /16 (65,536 IP addresses).
+Subnet cannot have overlapping CIDR block.
+- You can share your VPCs to leverage the implicit routing within a VPC for applications that require a high degree of interconnectivity and are within the same trust boundaries.
+This reduces the number of VPCs that you create and manage, while using separate accounts for billing and access control.
+You can simplify network topologies by interconnecting shared Amazon VPCs using connectivity features, such as AWS Private Link, AWS Transit Gateway, and VPC peering.
+For more information about the benefits of VPC sharing, see VPC sharing: A new approach to multiple accounts and VPC management
+- Each subnet have the 5 reserved IP addresses.
+For example, in 10.0.0.0/24, the reserved IP addresses are:
+- 10.0.0.0: Network address
+- 10.0.0.1: VPC router
+- 10.0.0.2: Domain Name System|DNS server (base of primary CIDR plus 2)
+- 10.0.0.3: Reserved for future use
+- 10.0.0.255: Broadcast address
+- VPC can add secondary IPv4 CIDR blocks to scale VPC.
+- Secondary block cannot be larger than destination CIDR range in a route of any of the VPC route tables.
+This only seems to apply to new CIDR blocks that have existing CIDR range in route table
+- VPC always have IPv4.
+- VPC can attach 1 IPv6 CIDR block to existing VPC or when creating new VPC.
+- CIDR has a fixed prefix length of /56.
+- CIDR is always publicly accessible, and cannot choose range of IP addresses.
+- Subnet of IPv6 CIDR is fixed at /64
+
+=== IP addressing
+
+- By default, EC2 and VPC use IPv4 addressing protocol.
+IPv6 is opt-in only
+
+image::ipv4-ipv6.png[]
+
+- Private IPv4 address is the default when launching EC2 instances.
+EC2 instances only know about its private IP address
+- Public IP address: The public IP address is mapped to primary private IP address through Network Address Translation.
+- Elastic IP
+
+=== Sharing VPC
+
+- VPC can be shared with AWS Resource Access Manager (SEED) to allow multiple AWS accounts to create application resources such as xref:aws_elastic_compute_cloud.adoc[], Amazon Relational Database Service, etc. into a shared, centrally-managed VPC.
+
+=== VPC Peering
+
+VPC peering
+is a networking connection between 2 VPCs that enables you to route traffic between them using private IPv4 or IPv6.
+
+VPCs can be in different regions
+
+==== Unsupported VPC peering configurations
+
+- Overlapping CIDR blocks
+- Transitive peering (peering is point-to-point only)
+- Edge to edge routing through a gateway or private connection: VPC cannot extend peering relationship to these connections:
+- VPN connection or AWS DirectConnect connection
+- Internet connection through Internet Gateway
+- Internet connection in private subnet through a NAT device (can use AWS Transit Gateway)
+- VPC endpoint to AWS service
+
+== VPC Networking components
+
+=== Internet Gateway
+
+- Internet gateway is a horizontally scaled, redundant, highly available VPC component that allows communication between VPC and the internet
+- Responsibilities:
+- Provides a target in route table for internet-routable traffic
+- Perform NAT for instances that have been assigned IPv4 address.
+- Internet Gateway provides one-to-one NAT on behalf of instance (instance is only aware of private IP) so that traffic leaves VPC and to internet, the reply address is set to public IPv4 address or Elastic IP address
+
+=== NAT Gateway
+
+- NAT gateway is a Network Address Translation service, allowing instances in private subnet to connect to service outside of VPC but external services cannot connect to these instances.
+- Provide one-to-many NAT
+- NAT Gateway only support IPv4 address.
+
+=== Egress-only internet gateway
+
+- Horizontally scaled, redundant, highly available VPC component that allows outbound communication over IPv6.
+- Free
+
+=== Carrier Gateway
+
+- Allows inbound traffic from carrier network in a specific location; Allows outbound traffic to carrier network and internet
+- Used in AWS Wavelength (5G network)
+
+=== Prefix list
+
+- Set of one or more CIDR blocks that make it easier to maintain security groups and route tables.
+
+== EC2 Networking components
+
+=== Network interfaces
+
+- Logical networking component in a VPC that represents a virtual network card
+
+=== Elastic IP address
+
+- Static, public IPv4 address designed for dynamic cloud computing.
+
+== Security
+
+[%header,cols=2]
+|===
+| Security Group
+| Network ACL
+
+| Operates at instance level
+| Operates at subnet level
+
+| ALLOW rules only
+| ALLOW/DENY rules
+
+| Stateful: Return traffic is automatically allowed
+| Stateless: Return traffic must be explicitly allowed by rules
+
+| Evaluate all rules before deciding whether to allow traffic
+| Process rules in order, starting with lowest numbered rule
+
+| Applies to instance only if security group is associated with instance
+| Applies to all instances in subnet
+
+| Maximum of 60 inbound and 60 outbound rules
+| Maximum of 20 inbound and 20 outbound rules
+
+| Can associate multiple SGs to an instance
+| An only apply one NACL to a subnet
+|===

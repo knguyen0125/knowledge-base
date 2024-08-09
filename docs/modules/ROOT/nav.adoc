@@ -6,6 +6,7 @@
 
 * xref:database.adoc[]
 ** xref:postgresql.adoc[]
+** xref:amazon_aurora.adoc[]
 ** xref:redis.adoc[]
 ** xref:aws_dynamodb.adoc[]
 ** AWS Redshift
@@ -33,11 +34,19 @@
 * Orchestration Platform
 ** xref:kubernetes.adoc[]
 ** RedHat OpenShift
-** AWS ECS
+** xref:aws_elastic_container_service.adoc[]
 ** HashiCorp Nomad
 
 * Networking & Content Delivery
 ** NGINX
 ** AWS WAF
-** AWS Elastic Load Balancing
+** xref:aws_elastic_load_balancing.adoc[]
 ** AWS CloudFront
+
+* AWS Services
+** xref:aws_auto_scaling.adoc[]
+** xref:aws_elastic_compute_cloud.adoc[]
+*** xref:aws_nitro_system.adoc[]
+*** xref:aws_elastic_fabric_adapter.adoc[]
+*** xref:amazon_machine_image.adoc[]
+** xref:aws_virtual_private_cloud.adoc[]

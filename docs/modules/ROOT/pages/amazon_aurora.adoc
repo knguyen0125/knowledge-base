@@ -1,0 +1,5 @@
+= Amazon Aurora
+
+Compatible with
+
+* xref:postgresql.adoc[]

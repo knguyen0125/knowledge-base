@@ -1,0 +1,9 @@
+= Elastic Fabric Adapter
+
+An Elastic Fabric Adapter is a network device that you can attach to an xref:aws_elastic_compute_cloud.adoc[EC2] instance to accelerate High Performance Computing and Machine Learning applications.
+
+Provides lower and more **consistent latency** and **higher throughput** than TCP. It achieves this by bypassing traditional TCP/IP stack and allow applications to communicate directly with the EFA. It also provide the traditional IP networking feature that are required to support xref:aws_virtual_private_cloud.adoc[VPC] networking as Elastic Network Adapter (ENA)
+
+EFA use `libfabric` to bypass OS TCP/IP stack
+
+Only some specific instance type and size support EFA, and the support varies between regions.

@@ -1,0 +1,255 @@
+= AWS Elastic Load Balancing
+
+Elastic Load Balancing automatically distributes application traffic across multiple targets in one or more Availability Zones
+
+Currently, Amazon Elastic Load Balancing offers the following load balancer:
+
+
+- [[_application_load_balancer]] Application Load Balancer
+- [[_network_load_balancer]] Network Load Balancer
+- [[_gateway_load_balancer]] Gateway Load Balancer
+- [[_classic_load_balancer]] Classic Load Balancer
+
+[%header,cols="5"]
+|===
+| Feature
+| Application Load Balancer
+| Network Load Balancer
+| Gateway Load Balancer
+| Classic Load Balancer
+
+| Load balancer type
+| Layer 7
+| Layer 4
+| Layer 3 Gateway + Layer 4 Load Balancing
+| Layer 4 / 7
+
+| Target type
+| IP, Instance, xref:aws_lambda.adoc[]
+| IP, Instance, xref:#_application_load_balancer[ALB]
+| IP, Instance
+|
+
+| Terminates flow/proxy behavior
+| Yes
+| Yes
+| No
+| Yes
+
+| Protocol
+| HTTP, HTTPS, gRPC
+| TCP, UDP, TLS
+| IP
+| TCP, SSL/TLS, HTTP, HTTPS
+
+| Reachable via
+| VIP
+| VIP
+| Route table entry
+|
+
+| *Layer 7 Features*
+|
+|
+|
+|
+
+| Redirects
+| Yes
+|
+|
+|
+
+| Fixed Response
+| Yes
+|
+|
+|
+
+| Desync Mitigation Mode
+| Yes
+|
+|
+|
+
+| HTTP header based routing
+| Yes
+|
+|
+|
+
+| HTTP2/gRPC
+| Yes
+|
+|
+|
+
+| *Common configurations*
+|
+|
+|
+|
+
+| Slow start
+| Yes
+|
+|
+|
+
+| AWS Outposts support
+| Yes
+|
+|
+|
+
+| AWS Local Zone support
+| Yes
+|
+|
+|
+
+| IP address - static / Elastic IP
+|
+| Yes
+|
+|
+
+| Connection Draining
+| Yes
+| Yes
+| Yes
+| Yes
+
+| Configurable idle connection timeout
+| Yes
+|
+|
+| Yes
+
+| AWS Private Link Support
+|
+| Yes
+| Yes
+|
+
+| Zonal Isolation
+|
+| Yes
+| Yes
+|
+
+| Session resumption
+| Yes
+| Yes
+|
+|
+
+| Long-lived TCP connection
+|
+| Yes
+| Yes
+|
+
+| Load Balancing to multiple ports on the same instance
+| Yes
+| Yes
+| Yes
+|
+
+| Deletion protection
+| Yes
+| Yes
+| Yes
+|
+
+| Preserve Source IP address
+| Yes
+| Yes
+| Yes
+|
+
+| WebSocket
+| Yes
+| Yes
+| Yes
+|
+
+| Supported network/Platforms
+| xref:aws_virtual_private_cloud.adoc[VPC]
+| xref:aws_virtual_private_cloud.adoc[VPC]
+| xref:aws_virtual_private_cloud.adoc[VPC]
+| xref:aws_virtual_private_cloud.adoc[VPC], EC2 Classic
+
+| Cross-Zone Load Balancing
+| Yes
+| Yes
+| Yes
+| Yes
+
+| IAM permissions
+| Yes
+| Yes
+| Yes
+| Yes (Only resource based)
+
+| Flow Stickiness
+| Symmetric
+| Symmetric
+| Symmetric
+| Symmetric
+
+| Target Failure behavior
+| Fail close on targets, unless all targets are unhealthy
+| Fail close, unless all unhealthy
+| Existing flows continue to go to existing target applicances, new flows rerouted to healthy target
+|
+
+| Health checks
+| HTTP, HTTPS, gRPC
+| TCP, HTTP, HTTPS
+| TCP, HTTP, HTTPS
+| TCP, SSL/TLS, HTTP, HTTPS
+
+| **Security**
+|
+|
+|
+|
+
+| SSL Offloading
+| Yes
+| Yes
+|
+| Yes
+
+| Server Name Indication (SNI)
+| Yes
+| Yes
+|
+|
+
+| Back-end Server Encryption
+| Yes
+| Yes
+|
+| Yes
+
+| User Authentication
+| Yes
+|
+|
+|
+
+| Custom Security Policy
+|
+|
+|
+| Yes
+
+| ALPN
+| Yes
+| Yes
+|
+|
+
+|===
