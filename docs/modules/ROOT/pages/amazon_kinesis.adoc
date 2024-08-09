@@ -1,0 +1,61 @@
+= Amazon Kinesis
+
+Amazon Kinesis make it easy to collect, process and analyze
+real-time, Streaming Data.
+
+Amazon Kinesis provides the following capabilities:
+
+* Kinesis Video Streams: Stream video from connected devices to AWS
+services such as Amazon Rekognition or Amazon SageMaker
+* xref:#_kinesis_data_streams[]: Stream data that can continuously capture
+gigabytes of data per second to Kinesis Data Analytics, Apache
+Spark on xref:amazon_elastic_mapreduce.adoc[], xref:aws_elastic_compute_cloud.adoc[] or xref:aws_lambda.adoc[Lambda]
+* xref:#_kinesis_data_firehose[]: Capture, transform and load data streams
+into AWS Data stores such as xref:aws_simple_storage_service.adoc[S3], xref:amazon_redshift.adoc[Amazon
+Redshift], or Amazon OpenSearch Service for near real-time analytics with existing business intelligence tools
+* Kinesis Data Analytics: Process data streams in real-time with
+SQL or Apache Flink
+
+[#_kinesis_data_firehose]
+== Kinesis Data Firehose
+
+Kinesis Data Firehose is a ETL service that reliably captures,
+transform and deliver streaming data into data lake, data stores and
+analytics services.
+
+Kinesis Data Firehose can stream data into xref:aws_simple_storage_service.adoc[S3], xref:amazon_redshift.adoc[Amazon Redshift], Amazon OpenSearch Service or Splunk using delivery stream. Before delivery, data is
+typically buffered and can optionally be transformed, either using
+built-in transformation or xref:aws_lambda.adoc[Lambda].
+
+[#_kinesis_data_streams]
+== Kinesis Data Streams
+
+Amazon Kinesis Data Streams is a Serverless data service that
+makes it easy to capture, process and store data streams.
+
+Kinesis Data Streams use cases includes:
+
+* Stream log and event data, from service logs, clickstream data, sensor
+data, etc. to generate metrics
+* Build applications for high frequency event data
+* Power event-driven applications (as substitutes for Amazon Simple
+Queue Service|SQS)
+
+Common use case of Kinesis Data Streams is real-time aggregation of
+data and loading the aggregate data into a data warehouse or
+xref:amazon_elastic_mapreduce.adoc[] cluster. Multiple applications can consume
+data from a stream, so that multiple actions such as archiving and
+processing can take place concurrently and independently. (Similar to
+xref:apache_kafka.adoc[Apache Kafka])
+
+image::Kinesis Data Streams Architecture.png[]
+
+One stream consists of one or more Kinesis Data Streams
+shard|shards, which is a uniquely identified sequence of data records.
+Each shard can support up to 5 TPS for read with maximum data read rate
+of 2 MB per second and up to 1000 records per second for writes, up to
+maximum total data write rate of 1 MB per second. Data is grouped within
+a stream using partition key.
+
+Kinesis Data Streams can be used in both on-demand mode, or
+provisioned mode.

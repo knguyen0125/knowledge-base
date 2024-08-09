@@ -1,0 +1,27 @@
+= Amazon Elasticache
+
+Amazon Elasticache is a fully managed, in-memory caching service, compatible with xref:redis.adoc[] or Memcached.
+
+== Amazon Elasticache for Redis
+
+ElastiCache for xref:redis.adoc[] have the following features to make it easier to manage Redis:
+
+* Automatic detection of and recovery from cache node failures
+* Multi-AZ for failed primary cluster to read replica, in Redis Cluster that support replication
+* Partitioning support to up to 500 shards
+* Synchronous failover support when problem occurs
+* Global Datastore for disaster recovery or low-latency reads.
+* Data tiering to utilize lower-cost SSD in addition to storing data in memory.
+
+Notes:
+
+* Redis is single-core. Larger instances should only increase memory in database and not computation speed.
+
+Replication:
+
+* Redis with cluster mode disabled support one shard
+* Redis with cluster mode enabled supports up to 500 shards, with each shard having 0 to 5 replicas.
+
+== Amazon Elasticache for Memcached
+
+Elasticache for Memcached provides managed Memcached with ability to automatically detect and recover from node failures, automatic discovery of nodes within a cluster, flexible AZ placement of nodes and cluster.

@@ -1,0 +1,13 @@
+= AWS Config
+
+AWS Config is a managed service that provides you with AWS resource inventory, configuration history, and configuration change notification to enable security and governance.
+
+AWS Config provides multi-account, multi-region data aggregation, giving an enterprise view of AWS Config rule
+
+== Concepts
+
+* Configuration History: a collection of configuration items for a given resource over any time period.
+* Configuration Item: a record of resources in AWS account. AWS Config creates a configuration item whenever it detects a change to resource type that it is recording.
+* Configuration Recorder: stores the configurations of the supported resources in account as configuration items.
+* Config rule: represent desired configuration settings for specific AWS resources or for an entire AWS account.
+** Provide customizable rule, when violated, AWS Config flags the resource and notifies via SNS.

@@ -4,12 +4,14 @@
 ** xref:aws_simple_notification_service.adoc[]
 ** xref:aws_simple_queue_service.adoc[]
 ** xref:amazon_eventbridge.adoc[]
+** xref:apache_kafka.adoc[]
 
 * xref:database.adoc[]
 ** xref:postgresql.adoc[]
 ** xref:amazon_relational_database_service.adoc[]
 *** xref:amazon_aurora.adoc[]
-** xref:redis.adoc[]
+** xref:amazon_elasticache.adoc[]
+*** xref:redis.adoc[]
 ** xref:aws_dynamodb.adoc[]
 ** xref:amazon_redshift.adoc[]
 
@@ -41,6 +43,7 @@
 ** xref:amazon_athena.adoc[]
 ** xref:amazon_quicksight.adoc[]
 ** xref:amazon_elastic_mapreduce.adoc[]
+** xref:amazon_kinesis.adoc[]
 
 * Orchestration Platform
 ** xref:kubernetes.adoc[]
@@ -74,3 +77,4 @@
 ** xref:aws_elastic_block_store.adoc[]
 ** xref:aws_elastic_file_system.adoc[]
 ** xref:aws_simple_storage_service.adoc[]
+** xref:aws_config.adoc[]
