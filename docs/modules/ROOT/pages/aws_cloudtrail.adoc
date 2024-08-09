@@ -1,0 +1,43 @@
+= AWS CloudTrail
+
+AWS CloudTrail is AWS service that logs actions taken by user, role or
+AWS service
+
+Terminologies
+
+* CloudTrail event: Record of an activity in an AWS account
+** Management events: Information about control-plane (management)
+operations performed on resources in AWS account. For example,
+configuring security; registering devices; setup logging, etc.
+*** Management events are logged by default
+** Data events: Information about data-plane (resource) operations.
+These include object-level API (PutObject, etc.) xref:aws_dynamodb.adoc[] events, etc.
+*** Data plane events are *NOT logged by default*
+** Insight events: Capture unusual activity in AWS account. CloudTrail
+detects unusual activity, log to a different prefix on S3 bucket for
+trail.
+*** Insight events are only logged when CloudTrail detects API usage
+that differ significantly from account’s typical usage pattern.
+* CloudTrail event history: CloudTrail provide viewable, searchable and
+downloadable record for 90 days.
+* Trail: A configuration that enables delivery of CloudTrail events to
+S3 bucket, Cloudwatch Logs and CloudWatch events.
+* *Organization Trail*: Configuration that enables delivery of
+CloudTrail events in management account and all member accounts to same
+xref:aws_simple_storage_service.adoc[] bucket, xref:amazon_cloudwatch.adoc[] logs and
+xref:amazon_cloudwatch.adoc[] events.
+* Global service events: For most services, events are recorded in
+region where the action occurred. For global services (xref:aws_identity_and_access_management.adoc[IAM]), events are delivered to any trail that includes
+global services.
+** For most global services, events are logged to US East (N. Virginia)
+region, but some are logged to US East (Ohio) or US West (Oregon) region
+** User can enable global service events for single region trail
+** By default, single region trail have global service event logging
+turn off; all regions trail have global service event turn on by
+default.
+** To turn on or off global service, user need to enable it in CLI
+* Regional vs All Region trail: A trail can log events in a single
+region, or for all regions.
+** Trails are only viewable in AWS regions where they log events
+* Events are not delivered in real-time, but on average about 15 minutes
+of an API call.

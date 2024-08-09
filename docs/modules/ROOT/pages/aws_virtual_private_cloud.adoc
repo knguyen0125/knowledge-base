@@ -148,3 +148,6 @@ VPCs can be in different regions
 | Can associate multiple SGs to an instance
 | An only apply one NACL to a subnet
 |===
+
+[#_vpc_flow_logs]
+== VPC Flow Logs

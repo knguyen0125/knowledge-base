@@ -1,0 +1,43 @@
+= Amazon CloudWatch
+
+Amazon CloudWatch monitors AWS resources and applications that run on
+AWS in real time. Amazon CloudWatch collects metrics data, logs and
+events. Additionally, CloudWatch also offers metric dashboards, alarms.
+
+CloudWatch also offers CloudWatch contributor insights, CloudWatch
+Canaries, CloudWatch Evidently, CloudWatch Real User
+Monitoring.
+
+Amazon CloudWatch is basically a metrics repository. An AWS service puts
+metrics into the repository, and you retrieve statistics based on
+metrics.
+
+Concepts:
+
+* Namespaces: a container for CloudWatch metrics
+* Metrics: a time-ordered set of data points that are published to
+CloudWatch. Metrics only exists in region they are created. They cannot
+be deleted, but will automatically expire after 15 months if no new
+data is published to them.
+** For xref:aws_elastic_compute_cloud.adoc[EC2] metrics: CloudWatch does not
+collect memory utilization and disk space metrics, instead, you need to
+install CloudWatch Agent to retrieve these metrics.
+* Dimensions: a name/value pair that uniquely identifies a metric. Up to
+10 dimensions can be added to a metric.
+* Statistics: metric data aggregation over a specified unit of time.
+
+== CloudWatch Events
+
+* Deliver near real-time stream of system events that describe changes
+in AWS resources.
+* Events respond to operational changes.
+
+== CloudWatch Logs
+
+* Monitor logs from EC2 instances in real-time
+* CloudWatch Logs Insights enables you to interactiively search and
+analyze log data in CloudWatch Logs using queries.
+* CloudWatch Vended Logs are logs natively published by AWS services on
+behalf of customer. xref:aws_virtual_private_cloud.adoc#_vpc_flow_logs[VPC Flow logs] is one of the examples.
+* Metric filters can be defined to search for terms or patterns in data
+** Filters do not retroactively filter data.

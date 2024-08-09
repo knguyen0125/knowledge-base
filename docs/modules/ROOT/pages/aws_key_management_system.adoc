@@ -14,7 +14,7 @@ top of key hierarchy. AWS KMS keys have 3 types:
 key policies of customer managed keys
 ** AWS managed key: AWS creates and controls the lifecycle and key
 policies of AWS managed keys. Customer can view access policies and
-[[AWS CloudTrail]] events, but cannot manage any aspects of these keys
+xref:aws_cloudtrail.adoc[] events, but cannot manage any aspects of these keys
 ** AWS owned key: Created and exclusively used by AWS for internal
 encryption operations. Customers do not have visibility to key policies
 or AWS owned key usage

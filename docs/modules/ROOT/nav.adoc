@@ -3,6 +3,7 @@
 *** xref:rabbitmq_perf_test.adoc[]
 ** xref:aws_simple_notification_service.adoc[]
 ** xref:aws_simple_queue_service.adoc[]
+** xref:amazon_eventbridge.adoc[]
 
 * xref:database.adoc[]
 ** xref:postgresql.adoc[]
@@ -45,6 +46,7 @@
 *** xref:aws_web_application_firewall.adoc[]
 ** xref:aws_elastic_load_balancing.adoc[]
 ** xref:amazon_cloudfront.adoc[]
+** xref:aws_certificate_manager.adoc[]
 
 * AWS Services
 ** xref:amazon_api_gateway.adoc[]
@@ -56,3 +58,7 @@
 ** xref:aws_virtual_private_cloud.adoc[]
 ** xref:aws_lambda.adoc[]
 ** xref:aws_simple_storage_service.adoc[]
+** xref:aws_key_management_system.adoc[]
+** xref:amazon_cloudwatch.adoc[]
+** xref:aws_cloudtrail.adoc[]
+** xref:aws_identity_and_access_management.adoc[]

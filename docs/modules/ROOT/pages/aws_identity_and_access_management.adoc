@@ -1,0 +1,229 @@
+= AWS Identity and Access Management
+
+IAM is a web service that helps control access to AWS resources.
+Customers use IAM to control who is authenticated and authorized to use
+resource.
+
+AWS IAM is a globally-resilient AWS service, and each account have a
+dedicated instance of IAM.
+
+== Concepts
+
+* Principals: A person or application that uses the AWS account root
+user, an IAM user, or an IAM role to sign in and make requests to AWS.
+Principals include *federated users and assumed roles*
+* IAM Identities: IAM resource objects that are used to identify and
+group. You can attach a policy to an IAM identity. These include *users,
+groups and roles*
+* IAM Entities: IAM resource object that AWS uses for authentication.
+These include *users and roles*
+* IAM Resources: Any resources that can be created by IAM. These include
+*users, groups, roles, policies, and identity providers*
+* Amazon Resource Name (ARN): Uniquely identify resources within any AWS
+accounts. Can be used to refers to single resource, or a group using
+wildcards
+** Format:
+*** `+arn:{partition}:{service}:{region}:{account-id}:{resource-id}+`
+*** `+arn:{partition}:{service}:{region}:{account-id}:{resource-type}/{resource-id}+`
+*** `+arn:{partition}:{service}:{region}:{account-id}:{resource-type}:{resource-id}+`
+** Partition: Typically `aws`, but in certain region it can be `aws-cn` or `aws-us-gov`
+** ARN can be used to specify resource in IAM Policy
+** Double colon in ARN: Resources don’t need to specify the region or
+account id
+
+== Authentication
+
+A Principal must be authenticated with AWS using their credentials to
+send request to AWS. It can either be with username and password, access
+keys, of via federation
+
+== Authorization
+
+During authorization, AWS uses values from request context to check for
+policies that apply to request.
+
+=== Policy Evaluation Logic
+
+____
+https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html[Policy
+evaluation logic - AWS Identity and Access Management]
+____
+
+AWS checks each policy that applies to the context of request. The
+evaluation logic for a request within a single account follow this rule
+(Explicit Deny, Explicit Allow, Implicit Deny):
+
+* By default, all requests are implicitly denied
+** This does not apply to AWS account root user. Root user always have
+full access and cannot be denied access by IAM policies
+* Explicit allow in permission policy overrides this default
+* Organization’s SCP, IAM permission boundary, or session policy
+overrides the allow. If any of these policy types exists, all of them
+must allow the request, otherwise it’s implicitly denied
+** AWS Organization Service Control Policy can limits the account root
+user access.
+* An explicit deny overrides any allows.
+
+=== Policies and permissions in IAM
+
+Policies are objects that can be attached to IAM identities (users,
+groups, or roles) or AWS resources, that are used by AWS to evaluate
+permission of principal to determine whether the request is allowed or
+denied.
+
+==== Identity-based policies
+
+Attach managed or inline policies to IAM identities. Identity-based
+policies grant permissions to an identity
+
+* Managed policies: Standalone policy that can attach to multiple users,
+groups and roles.
+** AWS managed policy
+** Customer managed policy
+* Inline policy: Policy that add directly to single user, group or role.
+** Usually used for exceptional cases
+
+==== Resource-based policies
+
+Attach inline policies to resources. Grant permissions to the principal
+specified in policy. Principal can be in the same account as the
+resource or in other accounts
+
+* AWS IAM only support 1 type of resource-based policy called role
+trust-policy. Trust policy define which principal can assume the role.
+* For cross account access, principal also need an identity-based policy
+to grant principal access to resource.
+* If principal and resource are in the same account, no additional
+identity-based policy is required.
+
+==== Permission boundaries
+
+A managed policy that can be attached to IAM entity (user or role).
+Defines the maximum permissions that the policy can grant, but does not
+grant permissions.
+
+* Permission boundary does not define maximum permission a
+resource-based policy can grant to an entity
+
+==== Organization Service Control Policy (SCP)
+
+Define maximum permission for account members of an organization or
+organization unit. Limits permission that identity-based policies or
+resource-based policies grant to entity (users or roles) within the
+account
+
+* Organization SCP can limit permission root user of an member account.
+Organization SCP cannot limit permission of root user of management
+account
+
+==== Access Control lists (ACLs)
+
+Similar to resource-based policies, but but does not use JSON policy
+structure. ACLs cannot grant permissions to entity within the same
+account, only for cross-account permissions.
+
+==== Session Policies
+
+Advanced session policy when assuming a role or for federation. Limit
+permission for a created session, but do not grant permissions
+
+=== Permission Boundary, SCP and Session Policies, in depth
+
+Permisison boundary is an advanced feature for using managed policy to
+set maximum permissions that an *identity-based policy* can grant to an
+IAM entity. An entity can only perform actions allowed by both its
+identity-based policy and its permission boundaries.
+
+An entity has its permissions affected by identity-based policies,
+resource-based policies, permission boundaries, SCP and session policy
+and generally follow Deny, Allow, Deny evaluation logic. If any of these
+have an explicit deny, request is denied.
+
+For implicit deny:
+
+* Permission boundary do not limit permissions granted to IAM user by a
+resource-based policy in an account.
+* Permission boundary limit permission granted to IAM Role or Federated
+users. However, if resource-based policy grants permissions directly to
+session principal, implicit deny does not limit those permissions.
+
+For Organization SCP, SCP is applied to entire AWS account and limit
+permissions for every request made by a principal within the account.
+SCP do NOT affect resource-based policies directly.
+
+Session policy: Always limits permissions granted by identity-based
+policy
+
+* Limits total permissions granted by resource-based and identity-based
+policy IF resource-based policy specify ARN of user or role as
+principal.
+* Does not limit permissions granted by resource-based policy if
+resource-policy specify the ARN of the session as principal
+
+== IAM Users
+
+An Identity used for anything requiring long-term AWS access (Humans,
+Applications, or service accounts).
+
+== IAM Groups
+
+A group is a collection of IAM users, which specify permissions for
+multiple users. One user can be a member of multiple group
+
+An user group cannot be specified as a Principal in a resource-based
+policy
+
+== IAM Roles
+
+IAM role is an IAM identity that is similar to IAM user in that
+permission policies can be attached to, but instead of uniquely
+associated with one person, a role is intended to be assumable by anyone
+who need it.
+
+Does not have long term credentials, but instead with a temporary
+security credentials for role session.
+
+=== Role Concepts
+
+* Role
+* Temporary credentials: Credentials with a time limit, generated by AWS
+Secure Token Service (STS)
+* AWS Service role: A role that an service (either AWS or custom)
+assumes to perform actions in account on your behalf. A service role
+include all permissions required for service to access the AWS resources
+it needs
+** AWS service role for EC2 instance: A special type of service role
+that an application running on an EC2 instance can assume to perform
+actions. Application running on that role can retrieve temporary
+credentials and perform actions that the role allows.
+** AWS service-linked role: Unique type of service role that is linked
+directly to an AWS service, containing necessary permissions for that
+service to call other service on your behalf
+* Role chaining: Use a role to assume a second role through CLI or API.
+** Role chaining limit role session to maximum of 1 hour.
+* Delegation: Granting permissions to someone to allow access to
+resources you control. Involve setting up a trust between 2 accounts
+** Trusting account: account that own the resource
+** Trusted account: account contains the user that need to access the
+resource
+* Federation: Creation of trust relationship between an external IdP
+** Web identity provider: any IdP that is compatible with OpenID Connect
+(OIDC)
+** Enterprise identity provider: Any IdP that is compatible with
+Security Assertion Markup language (SAML) 2.0
+** Federated user: Use existing identitites from AWS Directory Service,
+enterprise user directory, or a web identity provider
+* Trust policy: JSON policy document that define principals that you
+trust to assume the role
+* Role for cross-account access: A role that grant access to resources
+in one account to a trusted principal in a different account.
+
+== Limits
+
+* 5000 ARN Users per account
+** Can use IAM Roles & Identity Federation to fix this
+* IAM user can be member of 10 groups
+
+== Resources
+
+https://docs.aws.amazon.com/iam/index.html[AWS IAM]
