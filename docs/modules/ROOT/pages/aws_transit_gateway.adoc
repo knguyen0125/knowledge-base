@@ -5,11 +5,11 @@ AWS Transit Gateway reduces complexity in a multi-account environment where mult
 
 Without Transit Gateway
 
-image::Without AWS Transit Gateway.png[]
+image::without_aws_transit_gateway.png[]
 
 With Transit Gateway
 
-image::With AWS Transit Gateway.png[]
+image::with_aws_transit_gateway.png[]
 
 AWS Transit Gateway Network Manager can be used to provide a single, global view of private network to help reduce complexity of managing a global network across AWS and on-premise.
 

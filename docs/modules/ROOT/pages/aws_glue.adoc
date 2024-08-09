@@ -25,7 +25,7 @@ With dynamic frames, you get schema flexibility and a set of advanced transforma
 * JDBC-accessible database
 * MongoDB and Amazon DocumentDB
 
-image::AWS Glue Flow.png[]
+image::aws_glue_flow.png[]
 
 == Concepts
 

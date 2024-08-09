@@ -48,7 +48,7 @@ data from a stream, so that multiple actions such as archiving and
 processing can take place concurrently and independently. (Similar to
 xref:apache_kafka.adoc[Apache Kafka])
 
-image::Kinesis Data Streams Architecture.png[]
+image::kinesis_data_streams_architecture.png[]
 
 One stream consists of one or more Kinesis Data Streams
 shard|shards, which is a uniquely identified sequence of data records.
