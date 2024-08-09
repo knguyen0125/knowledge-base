@@ -1,5 +1,13 @@
 = Amazon Aurora
 
-Compatible with
+Amazon Aurora is a fully managed relational database engine that's compatible with MySQL and xref:postgresql.adoc[]. Unlike xref:amazon_relational_database_service.adoc[] which is essentially managed database on xref:aws_elastic_compute_cloud.adoc[EC2], Aurora has different architecture that allows it to have better performance than RDS MySQL or PostgreSQL.
 
-* xref:postgresql.adoc[]
+https://www.youtube.com/watch?v=uaQEGLKtw54[Aurora deep dive]
+
+Aurora is highly available by default.
+
+For data, Aurora stores copies of data in a cluster across multiple Availability Zones in a single AWS region. When data is written to the primary DB instance, Aurora synchronously replicates data across AZ to 6 storage nodes, providing data redundancy, eliminates I/O freezes and minimizes latency spikes.
+
+For instances, Aurora can have up to 15 reader instances, which can failover and become master should the master instance become unavailable. To keep the connection string consistent, customers can use cluster endpoint.
+
+Aurora can be highly available across AWS Regions with Amazon Aurora Global Database. An Aurora global database consists of one primary AWS Region, and up to 5 read-only secondary AWS Regions (each secondary AWS region counts as one read replica for the primary cluster). The global database allows applications to have low latency global reads, and fast recovery from outage that affect entire AWS Region. The replication between primary master and secondary regions is usually sub-second.

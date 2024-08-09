@@ -1,0 +1,108 @@
+= Amazon CloudFront
+
+Amazon CloudFront is a Content Delivery Network service that speeds up distribution of static and dynamic web content to users.
+When user requests content through CloudFront, the request is routed to AWS Edge Location that provides the lowest latency and additional reliability and availability because files are cached in multiple edge locations around the world.
+Using Amazon CloudFront also help reducing loads on origin servers.
+
+Amazon CloudFront use cases include:
+
+* Accelerate static website content delivery
+* Serve video on demand or live-streaming video
+* Field-level encryption in addition to HTTPS security, so that only certain applications at origin can see the data.
+* Customize/Dynamic content at edge via Lambda@Edge
+
+image::Amazon CloudFront Services.png[]
+
+== Terminologies
+
+* Origin server: Server that CloudFront gets your files which will then be distributed from CloudFront edge locations all over the world.
+Origin server is either a [[AWS Simple Storage Service|S3]] bucket or a *custom origin* (a custom HTTP server)
+* Distribution: Configuration for CloudFront that tells CloudFront which origin servers to get your files, as well as additional configurations such as logging, etc.
+* [[AWS Edge Location]] or [[Point of Presence]]: Collections of servers in geographically-dispersed data centers where CloudFront caches copies of files.
+** Point of presence makes sure that **popular content** can be served quickly, but it might remove contents that become less popular over time.
+** [[Regional Edge Cache]]: Similar to Point of Presence, but have larger cache than individual POP, so objects remain at cache longer.
+There are fewer [[Regional Edge Cache]] than [[Point of Presence]].
+*** Dynamic requests and non-idempotent HTTP methods such as PUT, POST, etc go directly to origin and do not proxy through regional edge caches.
+* Origin request: Requests to Origin when a viewer request to CloudFront results in a cache miss
+* Viewer response: Response to viewer
+
+== Best Practices
+
+* Use [[Origin Shield]]: a centralized caching layer that increases cache hit ratio, reduce origin load by reducing number of simultaneous requests that are sent to origin for the same object.
+* Increase cache hit ratio
+* Setup origin failover for scenarios that requires high availability
+
+== Securing access and restricting access to content
+
+* CloudFront integrates with [[AWS Certificate Manager (SEED)]] to manage SSL/TLS certificates.
+* CloudFront can restrict access:
+** To CloudFront cache via Signed URLs or signed cookies
+** To S3 origin by only allowing file access via Cloudfront - Use [[Origin Access Identity]]
+** To custom origin via custom headers, Viewer protocol policy and Origin Protocol policy.
+** Geographically restricting distribution of content via CloudFront geo restriction or via third-party.
+* CloudFront also supports serving private content with signed URLs, similar to S3 signed URLs
+
+== Customizing at edge with functions
+
+* [[CloudFront Function]] are lightweight functions in Javascript for high*scale, latency*sensitive CDN customizations.
+Offers millisecond startup times, scales immediately to handle millions of requests per second.
+** Use cases
+*** Cache key normalization
+*** Header manipulation
+*** URL redirect or rewrites
+*** Request authorization
+* [[Lambda@Edge]] is an extension of xref:aws_lambda.adoc[], can use Node.JS or Python runtime environment
+** Use cases
+*** Longer running functions
+
+[%header,cols="s,2*"]
+|===
+|
+| CloudFront Function
+| Lambda@Edge
+
+
+| Programming language
+| ECMAScript 5.1 / JS
+| Python and NodeJS
+
+| Event sources
+| Viewer request. Viewer response
+| Viewer request and response. Origin request and response
+
+| Scale
+| 10,000,000 RPS or more
+| Up to 10,000 RPS
+
+| Function duration
+| Submilliseconds
+| Up to 5 seconds for viewer request and response. Up to 30 seconds for origin request and resopnse
+
+| Maximum memory
+| 2 MB
+| 128 - 3008 MB
+
+| Maximum size of function code
+| 10 KB
+| 1 MB (Viewer); 50 MB (Origin)
+
+| Network access
+| No
+| Yes
+
+| Filesystem
+| No
+| Yes
+
+| Access to request body
+| No
+| Yes
+
+| Access to geolocation and device data
+| Yes
+| No (Viewer Request), Yes (Origin request and Response; Viewer response)
+
+| Logging
+| Yes
+| Yes
+|===

@@ -1,1 +1,261 @@
 = AWS DynamoDB
+
+Amazon DynamoDB is a key-value and document database that delivers single-digit millisecond performance at any scale
+
+It is fully managed, multi-region, multi-active, durable database.
+DynamoDB can handle more than 10 trillion requests per day and peak of 20 million requests per second.
+
+With DynamoDB, customers can create tables that store and retrieve any amount of data, and serve any level of request traffic.
+DynamoDB table can be On-Demand or with Provisioned capacity.
+With Provisioned capacity, customers can configure Auto Scaling to scale up capacity on demand, lowering cost.
+
+Data in DynamoDB is stored in partitions, backed by SSD and replicated cross multiple AZ in AWS region, providing high-availability and data durability.
+
+DynamoDB also offer cross-region replication (Global Tables) that provide automatic multi-active replication to Regions.
+When an application write data to other replica tables in on region, DynamoDB propagates the write to other replica tables in other region automatically with low latency.
+
+== DynamoDB Core components
+
+* Table: A collection of data, are schemaless and has initial limit of 256 tables per region
+* Items: A collection of attributes.
+DynamoDB uses primary keys to uniquely identify each item in a table, and secondary indexes to provide more querying flexibility
+** Each table contains zero or more items
+** Each item can have maximum of 400 KB in size
+* Attributes
+* Primary Key: Uniquely identify each item in table, so no items can have the same key.
+** Single Primary Key (Partition Key): A single primary key, composed on one attribute
+** Composite Primary Key (Partition Key and Sort Key)
+** DynamoDB uses partition key to determine which partition the item will be stored.
+All items with the same partition key are stored together, in sort order by sort key value.
+If no sort key is used, no two items can have the same partition key
+* Secondary Indexes: Let query data in table using alternate keys
+** Global Secondary Index: Index with partition key and sort key that can be different from the table
+*** There is a limit of 20 GSI per table
+** Local secondary index: An index that has same partition key as the table, but a different sort key
+*** There is a limit of 5 LSI per table
+* DynamoDB Stream: Optional feature that captures data modification events in DynamoDB tables
+** Each event is represented by a stream record, captures the following events:
+*** A new item is added
+*** An item is modified (captures before and after)
+*** An item is removed
+** Each stream record also contains the name of table, timestamp and other metadata
+** Stream records are organized into groups, or shards.
+Each shard acts as a container for multiple stream records, and contains information required for accessing and iterating through records
+** Stream records have a lifetime of 24 hours
+** Can be used with Lambda to trigger code that executes automatically whenever an event appears
+** Enables data replication within and across regions, materialized views of data in DynamoDB tables, data analysis using [[Amazon Kinesis]] materialized views, and more
+
+== Data Types
+
+* Scalar Types: number, string, binary, boolean, null
+* Document type: list and map
+* Set type: string set, number set and binary set
+
+== Data Operations
+
+* Scan
+* Query
+
+== Indexes
+
+Secondary index is a data structure that contains a subset of attributes from a table, along with an alternative keys to support Query operations.
+There are 2 different types of secondary indexes
+
+[%header,cols="s,2*"]
+|===
+| Characteristic
+| GSI
+| LSI
+
+| Default limits
+| 20 per table
+| 5 per table
+
+| Key schema
+| Primary key of GSI can either be simple (partition key) or composite (PK and SK)
+| Primary key must be composite
+
+| Key attributes
+| PK and SK can be any base table attributes of type string, number or binary
+| PK must be the same as partition key. Sort key can be any other
+
+| Size restriction
+| No size restriction
+| For each partition key value, total size of indexed items must be 10 GB or less
+
+| Can be created
+| Table creation time; After table creation
+| Table creation time
+
+| Can be deleted
+| Yes
+| No
+
+| Queries and Partitions
+| Query over entire table, across all partitions
+| Query over a single partition
+
+| Read consistency
+| Eventual consistency only
+| Eventual or strongly consistent
+
+| Provisioned throughput consumption
+| Has its own RCU and WCU
+| Consume RCU and WCU of base table
+
+| Projected attributes
+| Only request attributes that are projected into the index
+| Can request attributes that are not projected into the index.
+|===
+
+=== GSI Techniques
+
+https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-indexes.html[GSI Techniques - AWS Docs]
+
+== Backups
+
+You can create on-demand backup for DynamoDB tables or enable continuous backups with Point-in-time recovery.
+
+=== Point-in-Time Recovery
+
+PITR helps protect DynamoDB tables from accidental write or delete operations.
+You can restore that table to any point in time during last 35 days.
+DynamoDB maintains incremental backups of your table.
+
+== Eventually consistent vs consistent read
+
+When requesting a strongly consistent read, DynamoDB returns a response with most up-to-date data (always query the leader storage node).
+A strongly consistent read might not be available if network delay or outage
+
+DynamoDB does not support strongly consistent read across region
+
+== Capacity Mode
+
+There are 2 different read/write capacity modes:
+
+* On-demand
+** Flexible billing option capable of serving thousands of requests per second without capacity planning.
+Offers pay*per-request pricing for read and write operation
+** DynamoDB instantly accommodates workloads as they ramp up or down to any previously reached traffic level.
+If a workload traffic level hits a new peak, DynamoDB adapts rapidly to accommodate the workload.
+*** DynamoDB doubles capacity when reaching new peak.
+This doubling of capacity typically happens within 30 minutes, so throttling can happen if scaling too fast.
+*** DynamoDB don't scale down when reach a new peak, so there are a lot of over-provision and under-utilization.
+This is reflected in its cost
+** Use cases:
+*** New table with unknown workloads
+*** Unpredictable traffic
+*** Prefers ease of paying for only what you use
+** Read request units:
+*** 1 **strongly-consistent** read request, for an item up to **4 *KB** in size
+*** 2 **eventually-consistent** read request, for an item up to **4 KB** in size
+*** 1/2 **transactional** read request, for an item up to **4 KB** in size
+** Write request unit: 1 write for an item up to 1 KB in size
+* Provisioned
+** Specify number of reads and writes per second that you require for application.
+** Can use autoscaling to adjust table provisioned capacity automatically in response to traffic changes
+** Use cases:
+*** Predictable traffic
+*** Traffic is consistent or ramps up gradually
+*** Can forecast capacity requirements to control costs
+** Read capacity unit:
+*** 1 **strongly-consistent** read request, for an item up to **4 KB** in size, **per second**
+*** 2 **eventually-consistent** read request, for an item up to **4 KB** in size, **per second**
+*** 1/2 **transactional** read request, for an item up to **4 KB** in size, **per second**
+** Write capacity unit 1 write for an item up to **1 KB** in size, **per second**
+** Reserved capacity: one-time upfront fee and commit to a minimum provisioned usage level over a period of time
+
+== DynamoDB Stream
+
+Use cases:
+
+* Perform actions based on changes to items at the point in time when changes occur, such as aggregation, messaging or notification
+
+[%header,cols="s,2*"]
+|===
+| Properties
+| Kinesis Data Streams for DynamoDB
+| DynamoDB Streams
+
+| Data retention
+| Up to 1 year
+| 24 hours
+
+| Kinesis Client Library support
+| 1.x and 2.x
+| 1.x
+
+| Number of consumers
+| 5 simultaneous consumers per shard, 20 with enhanced fan-out
+| 2 simultaneous consumers per shard
+
+| Throughput quota
+| Unlimited
+| Quotas by DynamoDB table
+
+| Record delivery
+| Pull model with GetRecords
+| Pull model over HTTP using GetRecords
+
+| Ordering of record
+| Timestamp can be used to identity actual order
+| Stream records appear in same sequence as the actual modification
+
+| Duplicate record
+| Occasionally
+| No
+
+| Stream processing options
+| xref:aws_lambda.adoc[], Kinesis Data Analytics, Kinesis Data Firehose, [[AWS Glue]] Streaming ETL
+| xref:aws_lambda.adoc[], DynamoDB Stream Kinesis Adapter
+|===
+
+== Global table
+
+DynamoDB Global table provide a fully managed solution for deploying a multi-region, multi-active database, without having to build and maintain your own replication solution.
+
+=== Concepts
+
+* Global table: Collection of one or more replica tables, all owned *by a single AWS account
+* Replica table: Single DynamoDB Table that functions as a part of a *global table.
+** Each replica stores the same set of data items.
+** Any given global table can only have one replica table per AWS *region
+* Consistency: All newly written item usually propagates to all *replica tables within a second.
+** If application uses eventually consistent reads, it works without modification
+** If application requires strongly consistent reads, it must perform all of its strongly consistent reads and writes in the same region.
+** DynamoDB uses last-writer-wins reconciliation between concurrent updates
+* Requires DynamoDB Stream for replication.
+* Must ensure that tables have enough capacity for replication.
+
+== DynamoDB Accelerator (DAX)
+
+DynamoDB response times can be measured in single-digit milliseconds.
+DynamoDB Accelerator delivers response time that is in the microseconds.
+
+DAX is DynamoDB-compatible caching service that reduce response times of eventually consistent read workloads.
+
+DAX is API-compatible with DynamoDB
+
+Provide increased throughput and operational cost saving by reducing the need to overprovision for read-heavy or bursty workload.
+
+Use cases:
+
+* Fastest possible response time for read
+* Read a small number of items more frequently than others (hot partition)
+* Read intensive but also cost-sensitive
+* Requires repeated reads against a large set of data.
+
+Not ideal for:
+
+* Applications that require strongly consistent reads
+* Applications that do not require microsecond response time for reads
+* Applications that are write-intensive
+* Applications that are already using a different caching solution
+
+== Resources
+
+https://www.alexdebrie.com/posts/dynamodb-no-bad-queries/[SQL,NoSQL,and Scale: How DynamoDB scales where relational databases don't]
+
+https://www.youtube.com/watch?v=HaEPXoXVf2k[AWS re:Invent 2018: Amazon DynamoDB Deep Dive: Advanced Design Patterns for DynamoDB (DAT401)]
+
+https://www.youtube.com/watch?v=yvBR71D0nAQ[AWS re:Invent 2018: Amazon DynamoDB Under the Hood: How We Built a Hyper-Scale Database (DAT321)]

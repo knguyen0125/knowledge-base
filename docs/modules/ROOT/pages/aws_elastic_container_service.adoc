@@ -5,18 +5,18 @@ ECS is a highly scalable, fast Container management service that makes it easy t
 
 == Concept
 
-- Cluster: a collection of tasks or services. A cluster can be backed by either xref:aws_elastic_compute_cloud.adoc[] or AWS Fargate.
-- Service: a type of scheduling tasks within ECS, that runs and maintain a specified number of tasks simultaneously
-- Task: an instance of a task definition within a cluster.
-- Task definition: a text file in JSON format that describes one or more containers that form application.
-- Container agent: runs on each container instance within an xref:aws_elastic_container_service.adoc[] cluster, that sends information about the resource's current running tasks and resource utilization to ECS.
+* Cluster: a collection of tasks or services. A cluster can be backed by either xref:aws_elastic_compute_cloud.adoc[] or xref:aws_fargate.adoc[].
+* Service: a type of scheduling tasks within ECS, that runs and maintain a specified number of tasks simultaneously
+* Task: an instance of a task definition within a cluster.
+* Task definition: a text file in JSON format that describes one or more containers that form application.
+* Container agent: runs on each container instance within an xref:aws_elastic_container_service.adoc[] cluster, that sends information about the resource's current running tasks and resource utilization to ECS.
 
 == Scheduling ECS tasks
 
 Service scheduler: suitable for long running stateless services and applications. Service scheduler ensures that scheduling strategy is followed, and reschedules tasks when a task fails. There are 2 strategies available:
 
-- REPLICA: maintain a desired number of tasks across cluster
-- DAEMON: deploys exactly one task on each active container instance. Only xref:aws_elastic_compute_cloud.adoc[] supports DAEMON scheduling strategy
+* REPLICA: maintain a desired number of tasks across cluster
+* DAEMON: deploys exactly one task on each active container instance. Only xref:aws_elastic_compute_cloud.adoc[] supports DAEMON scheduling strategy
 
 Manually running task: suitable for processes such as batch jobs that perform work and then stop.
 

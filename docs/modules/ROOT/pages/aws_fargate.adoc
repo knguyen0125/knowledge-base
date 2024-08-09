@@ -1,0 +1,5 @@
+= AWS Fargate
+
+AWS Fargate is a serverless, pay-as-you-go engine that lets you focus on building applications without managing servers. AWS Fargate is compatible with xref:aws_elastic_container_service.adoc[ECS] and xref:aws_elastic_kubernetes_service.adoc[EKS].
+
+Fargate supports both x86 and ARM-based workloads. Additionally, Fargate also allows customers to run interrupt-tolerant ECS tasks with Spot Fargate, or with Compute Saving Plan.

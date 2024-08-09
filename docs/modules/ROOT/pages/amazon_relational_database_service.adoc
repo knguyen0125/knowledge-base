@@ -1,0 +1,12 @@
+= Amazon Relational Database Service
+
+Amazon Relational Database Service is a web service that makes it easier to setup, operate, and scale relational database in the AWS Cloud. With AWS RDS, you can provision open-source databases such as MySQL, MariaDB, xref:postgresql.adoc[], as well as proprietary databases such as Oracle or Microsoft SQL Server.
+
+RDS manages backups, software patching, automatic failure detection and recovery.
+
+Deployment options:
+
+* Single instance: not highly available, suitable for dev/test environment
+* Multi-AZ instance: a synchronous replica in a different availability zone that is not accessible to end-user. Used for failover scenario
+* Multi-AZ cluster (in preview): multiple synchronous replicas in 2 availability zones, used for failover. The other standby database is also accessible for clients, which increase capacity for read.
+* Read replica: asynchronous replica, used to scale read operations. Read replica can be in the same availability zone or in different availability zone.

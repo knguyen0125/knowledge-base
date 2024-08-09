@@ -1,0 +1,13 @@
+= AWS Elastic Kubernetes Service
+
+AWS Elastic Kubernetes Service is a managed xref:kubernetes.adoc[] on AWS without needing to install, operate, or maintain your own Kubernetes control plane or nodes.
+
+== Control plane architecture
+
+By default, EKS provides customers with a single-tenant Kubernetes control plane for each cluster. Each control plane consists of at least 2 API server instances and 3 etcd instances that run across 3 Availability Zones in an AWS Region.
+
+== Data plane architecture
+
+By default, EKS does not provide data plane (workers) for a new EKS cluster.
+
+Nodes can either be xref:aws_elastic_compute_cloud.adoc[] instances managed by EKS, managed by customers or using xref:aws_fargate.adoc[]

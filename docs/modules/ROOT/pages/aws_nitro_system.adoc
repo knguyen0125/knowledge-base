@@ -16,7 +16,7 @@ This Nitro System allows AWS to innovate faster and allow it to provide new feat
 
 == Related
 
-- AWS Nitro Enclaves
+* AWS Nitro Enclaves
 
 == Resources
-- https://www.youtube.com/watch?v=rUY-00yFlE4[AWS re:Invent 2019: Powering next-gen Amazon EC2: Deep dive into the Nitro System]
+* https://www.youtube.com/watch?v=rUY-00yFlE4[AWS re:Invent 2019: Powering next-gen Amazon EC2: Deep dive into the Nitro System]

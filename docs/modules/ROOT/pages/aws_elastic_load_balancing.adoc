@@ -5,10 +5,10 @@ Elastic Load Balancing automatically distributes application traffic across mult
 Currently, Amazon Elastic Load Balancing offers the following load balancer:
 
 
-- [[_application_load_balancer]] Application Load Balancer
-- [[_network_load_balancer]] Network Load Balancer
-- [[_gateway_load_balancer]] Gateway Load Balancer
-- [[_classic_load_balancer]] Classic Load Balancer
+* [[_application_load_balancer]] Application Load Balancer
+* [[_network_load_balancer]] Network Load Balancer
+* [[_gateway_load_balancer]] Gateway Load Balancer
+* [[_classic_load_balancer]] Classic Load Balancer
 
 [%header,cols="5"]
 |===
