@@ -1,6 +1,6 @@
 name: knowledge_base
 title: Kien's Knowledge Base
 version: 0.1.0
-start_page: 00_index.adoc
+start_page: landing_page.adoc
 nav:
   - modules/ROOT/nav.adoc

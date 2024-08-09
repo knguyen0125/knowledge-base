@@ -16,7 +16,7 @@ image::Amazon CloudFront Services.png[]
 == Terminologies
 
 * Origin server: Server that CloudFront gets your files which will then be distributed from CloudFront edge locations all over the world.
-Origin server is either a [[AWS Simple Storage Service|S3]] bucket or a *custom origin* (a custom HTTP server)
+Origin server is either a xref:aws_simple_storage_service.adoc[] bucket or a *custom origin* (a custom HTTP server)
 * Distribution: Configuration for CloudFront that tells CloudFront which origin servers to get your files, as well as additional configurations such as logging, etc.
 * [[AWS Edge Location]] or [[Point of Presence]]: Collections of servers in geographically-dispersed data centers where CloudFront caches copies of files.
 ** Point of presence makes sure that **popular content** can be served quickly, but it might remove contents that become less popular over time.
@@ -44,14 +44,14 @@ There are fewer [[Regional Edge Cache]] than [[Point of Presence]].
 
 == Customizing at edge with functions
 
-* [[CloudFront Function]] are lightweight functions in Javascript for high*scale, latency*sensitive CDN customizations.
+* CloudFront Function are lightweight functions in Javascript for high*scale, latency*sensitive CDN customizations.
 Offers millisecond startup times, scales immediately to handle millions of requests per second.
 ** Use cases
 *** Cache key normalization
 *** Header manipulation
 *** URL redirect or rewrites
 *** Request authorization
-* [[Lambda@Edge]] is an extension of xref:aws_lambda.adoc[], can use Node.JS or Python runtime environment
+* Lambda@Edge is an extension of xref:aws_lambda.adoc[], can use Node.JS or Python runtime environment
 ** Use cases
 *** Longer running functions
 

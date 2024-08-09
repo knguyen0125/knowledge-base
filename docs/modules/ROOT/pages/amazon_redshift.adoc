@@ -1,0 +1,66 @@
+= Amazon Redshift
+
+Amazon Redshift is a fully managed, petabyte-scale data warehouse
+service.
+
+Concepts:
+
+* Cluster: core infrastructure component of Amazon Redshift data
+warehouse in a cluster. A cluster composed of one or more compute nodes.
+If a cluster is provisioned with two ore more compute nodes, and
+additional leader node coordinates the compute nodes.
+* Database: A cluster contains one or more databases. User data is
+stored in one or more compute nodes. The SQL client communicates with
+the leader node, which in turns coordinate running queries with the
+compute node.
+
+== Amazon Redshift Spectrum
+
+You can use Amazon Redshift Spectrum to query data in xref:aws_simple_storage_service.adoc[] files without having to load the data into Amazon
+Redshift tables. The data can be registered with AWS Glue Data
+Catalog and enabled with AWS Lake Formation and then be queried
+with Redshift Spectrum.
+
+== Redshift system architecture
+
+=== Concepts
+
+* Leader node: manages communication with client programs and all
+communication with compute nodes. It parses and develops execution plan
+to carry out database operations, in particular, series of steps
+necessary to obtain results for complex queries.
+** The leader node distributes SQL statements to compute nodes only when
+a query references tables that are stored on the compute nodes. All
+other queries run exclusively on leader node.
+* Compute node: the leader node compiles code for individual elements of
+execution plan and assigns code to individual compute nodes. The compute
+nodes execute the compiled code and send intermediate results back to
+leader node for final aggregation.
+** Each compute node has its own dedicated CPU, memory and attached disk
+storage. As workload grows, you can increase compute capacity and
+storage capacity of a cluster by increasing number of ndoes, upgrade
+node types, or both.
+* Node slices: a compute node is partitioned into slices. Each slice is
+allocated a portion of the node’s memory and disk space, where it
+processes a portion of the workload assigned to the node. The leader
+node manages distributing data to the slices and apportion workload for
+any queries or other database operations to the slices. The slices then
+work in parallel to complete the operation.
+
+==== Performance
+
+* Redshift supports massively parallel processing, which enables fast
+execution of most complex queries operating on large amounts of data.
+Multiple compute nodes handle all query processing leading up to final
+result aggregation, with each core of each node executing the same
+compiled query segments on portion of the entire data.
+* Columnar data storage: Columnar data storage reduces overall disk I/O
+requirements and reduces the amount of data you need to load from disk.
+* Data compression: Data compression reduces storage requirements,
+reducing disk I/O, and improves query performance.
+* Query optimizer: Redshift query execution engine incorporates a query
+optimizer that is MPP-aware and also takes advantage of the
+columnar-oriented data storage.
+* Result caching: to reduce query execution time and improve system
+performance, Redshift caches the results of certain types of queries in
+memory on the leader node.

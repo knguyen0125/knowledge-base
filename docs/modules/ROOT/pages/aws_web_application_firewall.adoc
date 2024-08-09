@@ -1,0 +1,22 @@
+= AWS Web Application Firewall
+
+AWS WAF is an xref:web_application_firewall.adoc[] that helps protect web
+applications or APIs against common web exploits and bots that may
+affect availability, compromise security or consume excessive resources.
+
+AWS WAF integrates with xref:amazon_cloudfront.adoc[], xref:aws_elastic_load_balancing.adoc[] in front of webservers running on xref:aws_elastic_compute_cloud.adoc[EC2] instances, xref:amazon_api_gateway.adoc[] or AWS AppSync
+
+AWS WAF works using *rules*, which are statements that defines
+inspection criteria and action to take if web request meets the
+criteria. Rules can be grouped into *rules group*, and can use *Web ACL*
+to protect a set of AWS resources with rules. Multiple AWS resources can
+use one Web ACL, but only one Web ACL can be attached at any time.
+
+Additionally, AWS WAF also offers bot control, which helps manage bot
+activity.
+
+AWS Firewall Manager can be used to simplifies administration tasks
+across multiple accounts and resources. AWS Firewall Manager can be
+used with AWS WAF, AWS Shield Advanced,
+Security Group, AWS Network Firewall and Amazon Route53
+Resolver DNS Firewall.

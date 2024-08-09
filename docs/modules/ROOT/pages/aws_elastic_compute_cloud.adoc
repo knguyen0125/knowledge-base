@@ -1,8 +1,7 @@
 = AWS Elastic Compute Cloud
 :page-aliases: ec2, aws_ec2
 
-AWS Elastic Compute Cloud provides scalable computing capacity in AWS Cloud, using Virtual machines or **instances**.
-Each instance is spin up using pre-configured templates called xref:amazon_machine_image.adoc[] (AMIs).
+AWS Elastic Compute Cloud provides scalable computing capacity in AWS Cloud, using Virtual machines or **instances**. Each instance is spin up using pre-configured templates called xref:amazon_machine_image.adoc[] (AMIs).
 
 EC2 eliminates the needs to invest in hardware up front so that you can develop and deploy applications faster.
 
@@ -234,6 +233,19 @@ Currently, there are 2 mechanisms for using enhanced networking:
 * Support network speeds up to 10 Gbps for supported instance types
 * The following instance types uses Intel 82599 VF for enhanced networking: c3, c4, c2, c2, c4 (excluding `m4.16xlarge`), and r3
 
-=== xref:aws_elastic_fabric_adapter.adoc[]
+=== Elastic Fabric Adapter
 
-Elastic Fabric Adapter provides low-latency, high-thoughput to select EC2 instance types, suitable for HPC applications
+xref:aws_elastic_fabric_adapter.adoc[] provides low-latency, high-thoughput to select EC2 instance types, suitable for HPC applications
+
+== Storage
+
+[#_instance_store]
+=== Instance Store
+
+An instance store provides **temporary** block-level storage for instance. Storage is located on disks that are **physically attached** to the host computer. Ideal for temporary content such as cache, scratch data, or for data that is replicated across a fleet of instances.
+
+Instances with Instance Store trade storage durability for speed. Typically, instance store has much higher IOPS and throughput.
+
+=== AWS Elastic Block Store
+
+xref:aws_elastic_block_store.adoc[]

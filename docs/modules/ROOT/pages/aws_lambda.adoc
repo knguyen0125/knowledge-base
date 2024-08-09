@@ -6,7 +6,7 @@ Under the hood, AWS Lambda (as a service) runs code in high availability compute
 
 AWS Lambda compose code in Lambda functions. AWS Lambda only run the functions when needed and scales automatically.
 
-Currently, AWS Lambda natively supports Java, Go, PowerShell, Node.JS, C#g, Python, Ruby programming languages, with additional supports for other programming languages via Lambda custom runtime. AWS Lambda also supports OCI-compliant containers.
+Currently, AWS Lambda natively supports Java, Go, PowerShell, Node.JS, C#, Python, Ruby programming languages, with additional supports for other programming languages via Lambda custom runtime. AWS Lambda also supports OCI-compliant containers.
 
 Lambda scales functions based on concurrency and have an "all-function cumulative concurrency" limit. The initial burst limit is between 500 and 3000, depending on AWS Region|Region. Default regional limit is 1000 and can be increased.
 
@@ -16,4 +16,4 @@ Lambda function can also mount an AWS Elastic File System (SEED)|EFS to a local 
 
 Lambda function can be extended using Lambda extensions to augment Lambda functions such as Application Performance Monitoring|APM, Security or Governance.
 
-AWS Lambda integrates with other AWS services. Notable integration includes: Amazon API Gateway, xref:aws_dynamodb.adoc[], Amazon Simple Queue Service|SQS, AWS Simple Storage Service|S3, or with Amazon CloudFront via Lambda@Edge
+AWS Lambda integrates with other AWS services. Notable integration includes: xref:amazon_api_gateway.adoc[], xref:aws_dynamodb.adoc[], xref:aws_simple_queue_service.adoc[], xref:aws_simple_storage_service.adoc[], or with xref:amazon_cloudfront.adoc[] via Lambda@Edge

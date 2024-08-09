@@ -1,0 +1,122 @@
+= Amazon Simple Notification Service
+
+AWS SNS is a managed service that provides message delivery from
+publishers to subscribers. Publishers communicate asynchronously with
+subscribers by sending messages to a topic. Subscribers can subscribe to
+SNS topic and receive published messages using a supported endpoint
+type, such as AWS Kinesis Data Firehose, SQS, Lambda, HTTP, email,
+mobile push notifications, mobile text messages.
+
+Common AWS SNS scenarios includes:
+
+* Application integration / Fanout scenario: A message is pushed to an
+SNS topic is replicated and pushed to multiple endpoints. This allows
+for parallel asynchronous processing.
+* Application alerts: SNS can send application and system alerts to SMS
+or email
+* User notifications: SNS can push email messages or text messages (SMS)
+to individuals or groups
+* Mobile push notifications: Allows sending messages directly to mobile
+apps.
+
+== Event sources and destinations
+
+=== Event sources
+
+Apart from sending events/messages directly to SNS topic, SNS is also
+integrated with multiple AWS services:
+https://docs.aws.amazon.com/sns/latest/dg/sns-event-sources.html[Amazon
+SNS event sources - Amazon Simple Notification Service]
+
+=== Event destinations
+
+* Application to Application destinations:
+** Kinesis Data Firehose: Deliver events to stream for archiving and
+analysis purposes. Through this, you can deliver events to AWS
+destinations like S3, Redshift, Elasticsearch Service, or third-party
+destinations
+** xref:aws_lambda.adoc[]
+** xref:aws_simple_queue_service.adoc[]
+** Event Fork Pipelines: Deliver events to event backup and storage,
+event search and analytics, etc.
+*** This seems to be a legacy feature as SNS now recomend using Kinesis
+Data Firehose for this
+** HTTP/S: Deliver events to external webhooks
+* Application to Person destinations
+** SMS
+** Email
+** Platform endpoints/ Mobile push notifications
+** AWS Chatbot
+** PagerDuty
+
+== Standard vs FIFO topics
+
+FIFO topics allows customers to build applications that require messages
+to be sent and processed in a strict sequence and without duplicates
+
+The only destination allowed for FIFO SNS topics is FIFO SQS queues
+
+[cols="s,2*",options="header",]
+|===
+| |Standard |FIFO
+
+|Message Order |Best effort |FIFO
+|Delivery |At least once |Exactly once, with message deduplication
+|Transaction per second |Nearly unlimited |300 TPS
+|===
+
+FIFO message ordering:
+
+* SNS FIFO delivers messages to SQS FIFO in exact order that the message
+are published to the topic. With SQS FIFO, consumers receive the message
+in exact order that messages are sent to queue.
+** Each subscriber is perceived differently
+** When SQS FIFO queue subscriber becomes unreachable, the ordering can
+get out of sync.
+
+FIFO Message Grouping:
+
+* Messages that belong to the same group are processed one by one, in
+strict order relative to the group.
+
+image::sns-fifo-grouping.png[]
+
+FIFO Message deduplicating: When publishing to SNS FIFO topic, message
+must include deduplication ID. Any messages with the same deduplication
+ID, within 5 minute interval, is accepted but not delivered.
+
+* If message body is guaranteed to be unique for each published message,
+you can enable content-based deduplication. SNS automatically generate
+an unique hash for each message, so no deduplcation ID is needed.
+
+== Message durability
+
+Messages are replicated across multiple AZ, and provide dead-letter
+queues to handle exceptional cases. Message delivery fails when SNS
+topic can’t access a subscribed SQS queue due to client-side or server
+side error. SNS will retry for server-side error, for up to 29 days. SNS
+will NOT retry for client-side error.
+
+== Message filtering
+
+By default, SNS topic subscriber receives every message published to
+topic. To receive a subset of messages, a subscriber must assign a
+filter policy to topic subscription. Thi scan simplify use of SNS by
+consolidating message filtering criteria into topic subscription.
+
+SNS have a quota of ~100 filter policies per account per region, and
+this limit can be increased. However, it doesn’t seem like we can
+increase this too much, so filter policy should be applied judiciously.
+
+== Security
+
+SNS can enable both encryption at rest (with server-side encryption -
+SSE) and encryption in transit using TLS. SSE encrypts message as soon
+as SNS receives them, and SNS decrypts messages only when they are sent.
+
+=== Identity and Access Management
+
+In addition to using IAM roles and permissions, SNS has its own
+resource-based permissions that uses policy. You can use this access
+policy to grant access to another AWS account; limits subscription
+protocol, or allowing SNS to publish messages to SQS queue

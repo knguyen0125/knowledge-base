@@ -1,7 +1,7 @@
 site:
   title: Kien's Knowledge Base
   url: /
-  start_page: knowledge_base::00_index.adoc
+  start_page: knowledge_base::landing_page.adoc
   robots: disallow
 content:
   sources:

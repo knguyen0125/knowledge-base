@@ -8,8 +8,8 @@ AWS Nitro System contains the following components:
 * *Nitro Security Chip*: Provide security to instances by preventing EC2 or bare-metal instances from making changes to firmware devices. Nitro Security Chip implements Nitro Root of Trust, which blocks access to physical stores.
 * Nitro cards: A set of dedicated hardware that perform tasks that previously done in software by Hypervisors
 * Nitro Card for xref:aws_virtual_private_cloud.adoc[VPC]: Functions as a NIC and provides Networking connectivity. This acts as VPC data plane that provides routing, firewall (via security groups), etc.
-* Nitro Card for AWS Elastic Block Store|EBS: Allow connection to AWS Elastic Block Store, provides encryption support and NVM to remote storage protocol
-* Nitro Card for Instance Store: Allow connections to SDD/HDD directly attached to AWS physical servers
+* Nitro Card for xref:aws_elastic_block_store.adoc[EBS]: Allow connection to AWS Elastic Block Store, provides encryption support and NVM to remote storage protocol
+* Nitro Card for xref:aws_elastic_compute_cloud.adoc#_instance_store[Instance Store]: Allow connections to SDD/HDD directly attached to AWS physical servers
 * Nitro Card controller: Coordinate Nitro Cards, Nitro Hypervisor and Nitro Security Chip
 
 This Nitro System allows AWS to innovate faster and allow it to provide new features such as 100 Gbps networking or xref:aws_elastic_fabric_adapter.adoc[] to instances, as well as allow support for different architecture (ARM or AMD) faster

@@ -1,8 +1,8 @@
 * xref:messaging.adoc[]
 ** xref:rabbitmq.adoc[]
 *** xref:rabbitmq_perf_test.adoc[]
-** AWS SNS
-** AWS SQS
+** xref:aws_simple_notification_service.adoc[]
+** xref:aws_simple_queue_service.adoc[]
 
 * xref:database.adoc[]
 ** xref:postgresql.adoc[]
@@ -10,7 +10,7 @@
 *** xref:amazon_aurora.adoc[]
 ** xref:redis.adoc[]
 ** xref:aws_dynamodb.adoc[]
-** AWS Redshift
+** xref:amazon_redshift.adoc[]
 
 * Linux
 ** xref:redhat_enterprise_linux.adoc[]
@@ -41,14 +41,18 @@
 
 * Networking & Content Delivery
 ** NGINX
-** AWS WAF
+** xref:web_application_firewall.adoc[]
+*** xref:aws_web_application_firewall.adoc[]
 ** xref:aws_elastic_load_balancing.adoc[]
 ** xref:amazon_cloudfront.adoc[]
 
 * AWS Services
+** xref:amazon_api_gateway.adoc[]
 ** xref:aws_auto_scaling.adoc[]
 ** xref:aws_elastic_compute_cloud.adoc[]
 *** xref:aws_nitro_system.adoc[]
 *** xref:aws_elastic_fabric_adapter.adoc[]
 *** xref:amazon_machine_image.adoc[]
 ** xref:aws_virtual_private_cloud.adoc[]
+** xref:aws_lambda.adoc[]
+** xref:aws_simple_storage_service.adoc[]

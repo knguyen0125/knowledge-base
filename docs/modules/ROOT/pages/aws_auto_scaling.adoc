@@ -32,13 +32,13 @@ Scaling plan can scale based on:
 
 Dynamic Scaling creates a tracing scaling policies for the resources in xref:#_scaling_plan[]. The scaling policies adjust resource capacity in response to changes in resource utilization, with the intention to provide enough capacity to maintain utilization.
 
-image::AWS Auto Scaling Dynamic Scaling.png[]
+image::aws_auto_scaling_dynamic_scaling.png[]
 
 [#_predictive_scaling]
 == Predictive Scaling
 
 Predictive Scaling uses Machine Learning to analyze resource's historical workload and regularly forecasts the future load for the next two days.
 
-image::AWS Auto Scaling Predictive Scaling.png[]
+image::aws_auto_scaling_predictive_scaling.png[]
 
 Currently, only xref:aws_elastic_compute_cloud.adoc[EC2] Auto Scaling Group supports predictive scaling

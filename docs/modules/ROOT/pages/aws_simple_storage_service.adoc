@@ -1,0 +1,595 @@
+= AWS Simple Storage Service
+
+AWS S3 provides a highly scalable, reliable and inexpensive object-based
+storage infrastructure on Amazon. AWS S3 is a global service with
+regional resilience.
+
+== Concepts
+
+* Bucket: a container for objects stored in S3. Every object is
+contained in a bucket.
+** Bucket organize S3 namespace at highest level
+** Bucket identify account responsible for storage and data transfer
+charges
+** Play a role in access control
+** Serve as unit of aggregation for usage reporting
+* Object: Entities stored in S3. Objects contains Object data and
+metadata.
+** Data portion is opaque to S3
+** Metadata is a set of name-value pairs that describe object.
+* Keys: Unique identifier for an object in a bucket. Every object in a
+bucket has exactly one key
+** Combination of Bucket + Key + Version ID uniquely identify each
+object
+* Regions: AWS Region where S3 will store the bucket that you create.
+Objects stored in a Region never leave the region unless explicitly
+transferred to another region
+* Data consistency model
+** S3 provides *strong read-after-write consistency* for PUTs and
+DELETEs of objects in S3 bucket in all AWS Regions. This applies to both
+writes to new objects as well as PUTs that overwrites existing objects
+and DELETEs.
+** Read operation on S3 Select, S3 ACL, S3 Object Tags and object
+metadata are strongly consistent
+** Updates to Single key are *atomic* (If a PUT and a GET happens
+concurrently, GET request either get the old data or the new data, but
+never partial or corrupt data)
+*** If a PUT request is successful, data is safely stored.
+** S3 does not support object locking for concurrent writer. If 2 PUT
+requests are simultaneously made to the same key, the request with the
+latest timestamp wins
+** Bucket configurations have eventual consistency model
+*** If delete bucket and immediately list all bucket, deleted bucket
+might still appear in the list
+*** If enable versioning, might take a short amount of time for change
+to be fully propagated.
+
+== Storage Class
+
+=== Frequently accessed objects
+
+These storage classes are designed for performance-sensitive use cases:
+
+* *Standard*:
+** Object are stored redundantly across at least 3 AZ with milliseconds
+first byte latency
+** Billed GB/month fee for data stored; $ per GB transfer out and price
+per 1000 requests. No retrievable fee, no minimum duration, no minimum
+size
+** Costliest out of all available storage classes
+** Objects can be made publicly available
+
+=== Automatically optimizing data for changing or unknown access patterns
+
+*S3 Intelligent-Tiering* is designed to optimize storage costs by
+automatically moving data to the most cost-effective access tier,
+without performance impact or operational overhead.
+
+* There is a small monthly object monitoring and automation fee
+* Tiers available:
+** _Frequent Access_: default, priced the same as S3 Standard
+** _Infrequent Access_: Moved if data is not accessed after 30 days.
+Priced the same as S3 Standard - Infrequent Access, without the
+retrieval fees
+** _Archive Instant Access_: Moved if data is not accessed after 90
+days. Priced the same as S3 Glacier Instant Access, without the
+retrieval fees
+** _Archive Access_: Optional - Must be enabled to use. Moved if data is
+not accessed after 90 days. Priced the same as S3 Glacier Flexible
+Access
+*** No retrieval fees for bulk access
+*** Retrieval fees per GB for expedited access
+** _Deep Archive Access_: Optional - Must be enabled to use. Moved if
+data is not accessed after 180 days. Priced the same as S3 Glacier -
+Deep Archive, without the retrieval fees.
+* Data that are smaller than 128 KB are not monitored and not eligible
+for auto-tiering. These objects are always stored in Frequent Access
+tier.
+
+=== Infrequently accessed objects
+
+These storage classes are designed for long-lived and infrequently
+accessed data. These objects are available for millisecond access, with
+a retrieval fee for objects. Use cases include:
+
+* Backups
+* Older data that is accessed infrequently but still requires
+millisecond access
+
+Storage classes:
+
+* *Standard - IA*
+** Lower cost than standard.
+** Have retrieval fees (per GB)
+** Minimum capacity charge of 128KB per object.
+** Minimum duration: 30 days
+* *One Zone - IA*
+** Lower cost than Standard - IA
+** Have retrieval fees (per GB)
+** Minimum capacity charge of 128KB per object
+** Minimum duration 30 days
+** Data only stored in 1 AZ
+** For long-lived data which is NON-CRITICAL and REPLACEABLE; access is
+infrequent
+
+=== Archive
+
+These storage classes are designed for low-cost data archiving, with
+minutes to days first-byte latency. Objects stored in these archive need
+to be recovered to other S3 storage classes before it can be used.
+
+These objects cannot be made public
+
+Storage Classes:
+
+* *S3 Glacier Instant Retrieval*
+** At least 3 AZ, 11 9’s
+** Minimum duration: 90 days
+** Recovery time: milliseconds
+** Use case:
+*** Long-lived archive data accessed once per quarter with milliseconds
+retrieval
+* *S3 Glacier Flexible Retrieval (Formerly S3 Glacier)*
+** At least 3 AZ, 11 9’s
+** Minimum duration: 90 days
+** Recovery time
+*** Expedited (1-5 minutes)
+*** Standard (3 - 5 hours)
+*** Bulk (5-12 hours)
+** Use case:
+*** For archival data where frequent or real-time access isn’t needed
+* *S3 Glacier Deep Archive*
+** Minimum duration: 180 day
+** Recovery time
+*** Standard (12 hours)
+*** Bulk (up to 48 hours)
+** Use case:
+*** Archival data that rarely if ever needs to accessed for legal or
+regulation data storage
+
+[cols="8",options="header",]
+|===
+|Storage Class |Designed For |Durability (9’s) |Availability |AZs |Min
+Storage Duration |Min billable object size |Other considerations
+|Standard |Frequently accessed data |11 |99.99% |>= 3 |None |None |None
+
+|Standard-IA |Long-lived, infrequently accessed data |11 |99.9% |>= 3
+|30 days |128 KB |Retrieval fees per GB
+
+|Intelligent-Tiering |Unknown access pattern |11 |99.9% |>= 3 |None
+|None |Monitoring fee, no retrieval fee
+
+|One Zone-IA |Long-lived, infrequently accessed, non critical data |11
+|99.5% |1 |30 days |128 KB |Retrieval fees, not resilient
+
+|Glacier Instant Retrieval |Long-lived archive with milliseconds
+retrieval |11 |99.9% |>= 3 |90 days |128 KB |Retrieval fees. Recovery in
+milliseconds
+
+|Glacier Flexible Retrieval |Long-term data archiving |11 |99.99% |>= 3
+|90 days |40 KB |Retrieval fees. Recovery between minutes and hours
+
+|Glacier Deep Archive |Long-term data archiving |11 |99.99% |>= 3 |180
+days |40 KB |Retrieval fees. Recovery between hours and days
+|===
+
+== Security
+
+=== Access Management
+
+==== Resource-based policy - Bucket policies
+
+Bucket policy and identity-based policy should be be the default way to
+manage permissions to S3.
+
+____
+Bucket policies are limited to 20 KB in size.
+____
+
+==== Resource-based policy - Access Control List (ACLs)
+
+Generally ACLs are inflexible compared to bucket policies, however, in
+certain cases ACL is needed
+
+* When to use Object ACL:
+** When Objects are not owned by bucket owner
+** Need to manage permissions at the object level
+* When to use Bucket ACL: Grant write permission to the S3 Log Delivery
+group to write access log to bucket.
+
+To grant permissions for an object or bucket, ACL must specify a grantee
+(an aws account using canonical user id of AWS account, or a predefined
+S3 groups) and Permission.
+
+Predefined S3 groups contains:
+
+* Authenticated Users Group - All AWS accounts. Requests must be signed
+* All Users Group - Everyone. Requests can be not signed
+* Log Delivery Group
+
+Permissions contains:
+
+[width="100%",cols="11%,52%,37%",options="header",]
+|===
+|Permission |When granted on bucket |When granted on object
+|READ |Allow grantee to list object in bucket |Allow grantee to read
+object data and metadata
+
+|WRITE |Allows grantee to create, deleve and overwrites objects in
+bucket |Not applicable
+
+|READ_ACP |Read bucket ACL |Read object ACL
+
+|WRITE_ACP |Write bucket ACL |Write object ACL
+
+|FULL_CONTROL |All of the above |All of the above
+|===
+
+==== Block Public Access
+
+Provides override to public access configuration created by ACL or
+bucket policies. By default, new buckets, access points and objects
+don’t allow public access.
+
+Settings include:
+
+* Block public access by new ACL
+* Block public access by new and existing ACL
+* Block public access by new Bucket Policies
+* Block public access by new and existing bucket policies
+
+=== Data Encryption
+
+Data encryption refers to both encryption-in-transit (typically uses
+SSL/TLS) and encryption-at-rest, which will be explored deeper below
+
+==== Types of Object Encryption
+
+* Client-Side Encryption (Encryption-in-transit and encryption-at-rest):
+Encrypt data client-side and upload encrypted data to Amazon S3
+* Server-Side Encryption (Encryption at rest): Requests S3 to encrypt
+objects before saving on disks in its data centers, and decrypt it when
+download the object
+** SSE-C: Customer manages encryption keys and S3 manages the encryption
+process.
+** SSE-S3: S3 manages both encryption keys and the encryption process
+*** S3 encrypts each object with a unique key. As an additional
+safeguard, S3 also encrypts the key itself with a key that S3 regularly
+rotates.
+*** SSE-S3 uses AES256
+** SSE-KMS: Similar to SSE-S3, but provide some additional benefits and
+charges
+*** S3 uses AWS KMS keys to encrypt S3 objects.
+*** AWS KMS generates data encryption key, which is used to encrypt the
+object. The Data Encryption Key is also encrypted and stored alongside
+the data.
+*** S3 Bucket Keys: reduce the cost of S3 server-side encryption using
+SSE-KMS.
+**** Without S3 Bucket Keys: KMS generates a new data encryption key for
+each object
+**** With S3 bucket keys: KMS generate a bucket-level key that is used
+to create unique data keys for new objects. This reduces the needs for
+S3 to make requests to KMS to complete encryption operations.
+*** Benefits:
+**** To create or access objects, a request must be made to KMS, thus
+provides role separation.
+**** Customer can specify which KMS key they want to use, and control
+rotation of KMS key to meet regulations
+
+[cols="4",options="header"]
+|===
+|Type of encryption |Abbreviation |Who manages keys |Who manages
+encryption process
+|Client-side encryption |CSE |Client |Client
+
+|Server-Side encryption - Customer provided encryption keys |SSE-C
+|Client |S3
+
+|Server-Side encryption - S3-managed keys |SSE-S3 AES256 |S3 |S3
+
+|Server-Side encryption - KMS |SSE-KMS |KMS |S3
+|===
+
+==== Bucket Default Encryption
+
+Customer can set the default encryption behavior for an S3 Bucket so
+that all new objects are encrypted when they are stored in the bucket
+(only when they don’t specify encryption when uploading to S3)
+
+Bucket policy can be provided to restrict which kind of encryption can
+be used.
+
+== Resilience
+
+=== S3 Versioning
+
+S3 Versioning keep multiple versions of an object in one bucket and
+enable you to restore objects that are accidentally deleted or
+overwritten.
+
+Once enabled S3 versioning, it cannot be disabled and only be suspended.
+
+Regardless of whether you enable versioning, each object stored has a
+Version ID. If versioning is not enabled, the Version ID is set to null,
+otherwise S3 assigns a random ID value for the object.
+
+[width="100%",cols="10%,70%,20%",options="header",]
+|===
+|Operation |Versioning Enabled |Versioning not Enabled
+|GET |Get current version, unless Version ID is specified |Get current
+version
+
+|PUT |Generate new version ID and stored as new object |Overwrite
+
+|DELETE |Create a special version called delete marker which hides
+previous versions |Permanent delete
+|===
+
+=== MFA Delete
+
+When working with S3 Versioning, another layer of security is MFA
+delete. Bucket owner must include two forms of authentication in any
+request to delete a version or change versioning state of the bucket.
+
+Only bucket owner (root account) can enable MFA delete and must use CLI
+to enable or disable deletion. IAM users cannot enable MFA delete
+
+MFA delete cannot be used with lifecycle configurations
+
+=== Object Lock
+
+Store object using a Write-Once-Read-Many (WORM) model, to prevent
+object from being deleted or overwritten for a fixed amount of time or
+indefinitely. Object lock is enabled at bucket level and object
+versioning must be enabled. Object lock affect individual objects
+
+Retention modes
+
+* Governance mode: Users can’t overwrite or delete an object version or
+alter its lock settings unless they have special permission
+* Compliance mode: No-one, including root user can overwrite or delete
+object version
+
+Retention periods: Amount of time that object lock protects an object
+version
+
+Legal holds: Legal holds prevent object version from being overwritten
+or deleted, but doesn’t have an associated retention period and remain
+in effect until removed
+
+== Replication
+
+Replication enables automatic, asynchronous copying of objects across
+AWS S3 buckets.
+
+Use cases:
+
+* Replicate objects while maintaining metadata
+* Replicate objects into different storage classes
+* Maintain object copies under different ownership
+* Keep objects stored over multiple AWS Regions
+* Replicate objects within 15 minutes
+
+Types of replication:
+
+* Cross-Region Replication (CRR): Copy object across different regions
+** Use cases:
+*** Meet compliance requirements
+*** Minimize access latency
+*** Increase operational efficiency: Clusters in different region
+analyzing same set of data
+* Same-Region Replication (SRR): Copy object to a different bucket in
+the same region
+** Use cases:
+*** Aggregate logs into a single bucket
+*** Configure live replication between production and test accounts
+*** Data sovereignty laws
+
+By default, S3 replicates the following:
+
+* Object created after replication configuration (existing objects are
+not replicated by default)
+* Unencrypted objects
+* Objects encrypted using SSE-S3 or SSE-KMS.
+* Object metadata
+* Object tags
+* Object Lock retention information
+
+The following are not replicated:
+
+* Objects stored in Glacier or Glacier Deep Archive
+* Delete operations:
+** If Version ID is not specified:
+*** If using the latest version of replication configuration, S3 does
+not replicate delete marker by default
+*** If not using the latest version of replication configuration, S3
+replicates delete markers
+**** If object deletion is from a lifecycle action, delete marker is not
+replicated
+** If Version ID is specified: Deleted version is not replicated to
+prevent from malicious deletions
+* System events
+
+Configuration for replication:
+
+* Destination buckets (required)
+* Objects that is eligible to be replicated (required): Can specify the
+whole bucket or just a prefix
+* Replica storage class (optional)
+* Replica ownership (optional) - Default to be the owner of source
+object.
+
+Replication Time Control: A guaranteed 15 minute replication SLA
+
+== Lifecycle Configuration
+
+S3 Lifecycle configuration is a set of rules that defines action S3
+applies to a group of objects, to reduce cost. There are 2 types of
+actions:
+
+* Transition actions: Transition object to another storage class
+* Expiration actions: Define when objects expire
+
+Use cases:
+
+* For objects that have a well-defined lifecycle. For example:
+** Log data
+** Documents that are frequently accessed for a limited period of time.
+** Data stored because of regulatory requirement but not frequently
+accessed
+
+=== Supported transition
+
+S3 supports a waterfall model for transitioning between storage classes
+
+image::s3-lifecycle-transition-flow.png[]
+
+In order to transition from Standard or Standard-IA to Standard-IA to
+One Zone-IA: objects must be stored for at least *30 days* in *Standard*
+storage class.
+
+In order to transition from Standard-IA to One Zone-IA: Object must have
+a minimum 30-day storage class.
+
+== Presigned URLs
+
+All objects and buckets are private by default, however, you can use a
+presigned URL to optionally share objects or enable customer to upload
+objects to buckets without AWS security credentials or permissions.
+
+The URL is a bearer token that grant access to customers who possess
+them, and they have the same permission as original signing user. URL is
+only valid for a certain amount of time.
+
+The amount of time the presigned URL can be valid for depends on who
+sign the account:
+
+* IAM instance profile: up to 6 hours
+* STS: Up to 36 hours with permanent credentials
+* IAM user: Up to 7 days
+
+When signing URL with temporary token, the URL expires when token
+expires, even if the URL was created with a later expiration time.
+
+== S3 Select / S3 Glacier Select
+
+* Uses SQL-Like statement to select part of the object, prefiltered by
+S3
+* Operate on CSV, JSON, Parquet with BZIP2 compression for CSV and JSON
+
+== S3 Events
+
+AWS S3 Event Notifications allow customer to receive notifications when
+certain events happen in S3 bucket. Event can be delivered to SNS topic,
+SQS queue, or Lambda function. S3 need to have permission in order to
+publish to SNS topics or SQS queue, or to invoke Lambda functions
+
+Types of events:
+
+* Object created
+* Object deleted
+* Object restored
+* Replication
+
+== Monitoring
+
+=== Logging
+
+==== CloudTrail
+
+S3 is integrated with CloudTrail to record actions taken by a user, role
+or AWS service. In general, CloudTrail is more flexible than Server
+access logs and usually much faster than S3, but doesn’t capture
+lifecycle transitions, expirations, restores.
+
+==== Server access log
+
+* Best Effort log delivery, access to Source bucket and usually logged
+in Target bucket within a few hour. Log record might be delivered long
+after request is actually processed, or *might not be delivered at all*
+* Uses S3 Log Delivery Group, which requires target bucket ACL to allow
+S3 Log Delivery Group
+* Log files consist of log records. Records are newline-delimited,
+Attributes are space-delimited
+
+== Static Website Hosting
+
+You can use AWS S3 to host a static website.
+
+* Normal access is via AWS APIs. Static Website Hosting allow access via
+HTTP (not HTTPS)
+** Requester Pays bucket do not allow access through a website endpoint
+** Website endpoint only support publicly readable content, and only
+support GET and HEAD requests.
+* Index and Error documents are set
+* Custom Domain can be set via Route53
+** Bucket Name matters - Bucket name must match domain name
+* Redirection can be configured to support subdomain (for example:
+`www.example.com` to `example.com`)
+* Use cases:
+** Offloading
+*** Offload media or large data to S3 bucket
+** Out-of-band pages
+*** Accessing outside the main way
+*** Fallback in case compute service is out (during maintenance, for
+example)
+
+== Performance
+
+=== Upload Performance Optimization
+
+* PUT upload: Default way an object occur. Uploaded in a single stream.
+A file becomes and object and uploaded using PutObject
+** If stream fails, whole upload fails
+** Reduce speed and reliability
+** Recommended when < 100mb
+** Upload up to 5GB
+* Multipart Upload
+** Improve speed and reliability
+** Breaks data to multiple parts
+*** Minimum size is 100 MB
+*** Maximum of 10000 parts, range from 5MB to 5GB.
+**** Last part can be smaller than 5MB if needed
+** Parts can fail and be restarted
+** Improve transfer rate (use multiple parts) and reliability
+
+=== API Performance Optimization
+
+Amazon S3 automatically scales to high request rates, and application
+can achieve at least 3500 PUT/COPY/POST/DELETE or 5500 GET/HEAD requests
+per second, per prefix in a bucket.
+
+=== Transfer Optimization
+
+==== S3 Transfer Acceleration
+
+S3 Transfer Acceleration is a bucket-level feature that enables fast,
+easy and secure transfers of files over long distance. Transfer
+Acceleration utilizes distributed edge locations in AWS CloudFront. As
+data arrives at edge location, data is routed to S3 over an optimized
+network path
+
+Requirements for using Transfer Acceleration:
+
+* Only supported on virtual-hosted style request
+* Name used for transfer acceleration must be DNS-compliant and must not
+contain periods (`.`)
+* Must use endpoint `bucketname.s3-accelerate.amazonaws.com`
+
+Cost is not charged if regular Amazon S3 transfer is faster than using
+Transfer Acceleration.
+
+== Limits
+
+* An account have a limit of 100 buckets (Soft limit) and 1000 buckets
+(Hard limit)
+* Bucket name must be *globally unique* within a partition. Bucket name
+must be 3 to 63 characters and consists of lowercase letters, numbers,
+dots (`.`) and hyphens (`-`)
+** Bucket name must not be formatted as an IP address
+** Bucket must begin and end with a letter or a number
+** Additional naming limits:
+https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html[Bucket
+naming rules - Amazon Simple Storage Service]
+* There is no limit for number of objects stored in a bucket.
+* An object have a minimum of 0 bytes to 5 TB.

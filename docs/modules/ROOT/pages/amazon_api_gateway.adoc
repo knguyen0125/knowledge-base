@@ -1,0 +1,20 @@
+= Amazon API Gateway
+
+Amazon API Gateway is a fully managed service that allows developers to
+create REST-ful and WebSocket API. API Gateway handles all tasks
+involved in accepting and processing up to hundreds of thousands of
+concurrent API calls, including traffic management, CORS support,
+authorization and access control, throttling, monitoring, and API
+version management.
+
+Amazon API Gateway comes with 3 flavors:
+
+* HTTP API: Low-latency, cost-effective integrations with AWS services
+* REST API: More costly than HTTP APIs, but offers more features.
+* WebSocket API: Supports 2 way communication between client apps and
+backend.
+
+Basically Amazon API Gateway provides a serverless API Gateway
+offering that scales, but this seems to mostly works with xref:aws_lambda.adoc[] and xref:aws_dynamodb.adoc[].
+
+Amazon API Gateway also integrates with xref:aws_web_application_firewall.adoc[]

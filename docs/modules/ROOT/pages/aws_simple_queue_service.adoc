@@ -1,0 +1,61 @@
+= Amazon Simple Queue Service
+
+Amazon SQS is a fully managed message queuing service that enables decoupling and scale microservices, distributed systems, and serverless applications.
+
+SQS support pull-based message queuing options
+
+== Benefits
+
+* Customer can control who can send and receive message
+* Support Server-side encryption with xref:aws_key_management_system.adoc[KMS] (at rest) and in transit
+* Stores messages on multiple servers for durability, availability
+* Uses redundant architecture to provide highly-concurrent access to messages and high availability for producing and consuming messages
+* Can scale to process each buffered requests and handle any load increases or spikes independently
+* Locks message during processing so that multiple producers can send and multiple consumers can receive message at the same time
+
+== Standard vs FIFO queues
+
+[width="100%",cols="3",options="header",]
+|===
+| |Standard |FIFO
+
+|Throughput
+|Unlimited
+|Up to 300 messages per second
+
+With batching: Up to 3000 messages per second
+
+Higher throughput mode: 3000 messages per seconds, or 30,000 messages per second with batching
+
+|Delivery
+|At least once
+|Exactly once. FIFO queue enables message deduplication with deduplication ID so that duplicate messages are not introduced to queue
+
+|Ordering |Best effort |FIFO
+|===
+
+== Message attributes
+
+* Messages can include structured metadata using message attributes
+* Messages can include timers to specify the initial delay for a message added to queue. Minimum 0 seconds, maximum is 15 minutes
+* SQS doesn’t automatically delete a message after receiving it, in case you don’t successfully receive the message
+* You can delete all messages in queue by purging them
+* Long polling: Reduce cost by eliminating number of empty responses and false empty responses. Long polling doesn’t return a response until a message arrive in the queue, or the poll timeout
+* Short polling: Returns immediately, but only poll a subset of servers so can returns false empty
+* To lock a message, SQS sets a visibility timeout for each received message. Default visibility timeout is 30 seconds, minimum is 0 and maximum is 12 hours
+* Dead-letter queues, which other queues can target for messages that can’t be processed successfully
+** When to use DLX
+*** Avoid additional costs from SQS handling failed messages over and over again. Can help troubleshoot incorrect message transmission operations
+*** Decrease number of messages and reduce possibility of exposing system to poison-pill messages (messages that can be received but can’t be processed)
+** When not to use DLX
+*** Want to be able to keep retrying indefinitely in SQS queue
+*** Don’t want to break exact order of messages in SQS FIFO queue
+
+== Best practices
+
+* Extend message visibility timeout to maximum time it takes to process and delete the message. Additionally, if you don’t know how long it takes to process a message, keep extending the visibility timeout
+* Use appropriate polling mode
+* Configure dead-letter queue to capture problematic messages
+* Don’t create reply queues per message, but create a reply queue on start up, per producer and use correlation ID message attribute to map replies to requests
+* Reduce cost by batching message actions
+* Use deduplication ID to monitor duplicate sent messages

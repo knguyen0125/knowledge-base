@@ -1,0 +1,150 @@
+= AWS Key Management System
+
+AWS KMS is a managed, regional service that makes it easy to create and
+control encryption keys.
+
+AWS KMS supports both symmetric and asymmetric keys, and is capable of
+performing cryptographic operations.
+
+== Concepts
+
+* AWS KMS Key / Customer Master Key: A logical key that represents the
+top of key hierarchy. AWS KMS keys have 3 types:
+** Customer managed key - Customers create and control the lifecycle and
+key policies of customer managed keys
+** AWS managed key: AWS creates and controls the lifecycle and key
+policies of AWS managed keys. Customer can view access policies and
+[[AWS CloudTrail]] events, but cannot manage any aspects of these keys
+** AWS owned key: Created and exclusively used by AWS for internal
+encryption operations. Customers do not have visibility to key policies
+or AWS owned key usage
+* Alias: User-friendly name that is associated with a KMS key
+* Permissions: Policy attached to a KMS key that defines permissions on
+the key.
+* Grants: Delegated permission to use a KMS key when the intended IAM
+principals or duration of usage is now known
+** Define scoped-down permissions for how an AWS service can use a KMS
+key
+* Data keys: Cryptographic keys generated on HSMs, protected by a KMS
+key.
+** Unlike KMS keys, data keys are returned to customer for use outside
+of AWS KMS
+** KMS does not store this data key
+** Typically, KMS will return both plaintext and encrypted data keys.
+Customers use plaintext data key to encrypt data, and store both
+encrypted data key and encrypted data.
+*** To decrypt, use KMS to decrypt the encrypted data key, and use
+decrypted data key to decrypt data
+* Encryption context: Key-value pair map of additional information that
+is associated with AWS KMS-protected information.
+* Key material: secret string of bits used in cryptographic algorithm.
+** Key material origin: source of key material in KMS key. Valid key
+material includes:
+*** KMS (AWS_KMS): KMS creates and manages key material for KMS key in
+its own key store
+*** External (EXTERNAL): Imported key material
+*** Custom key store (AWS_CLOUDHSM): KMS created key material in custom
+key store
+
+== Security
+
+=== Data encryption
+
+Data in AWS KMS consists of AWS KMS keys and encryption key material
+that KMS keys represent. The key material exists in plaintext only
+within KMS *FIPS 140-2 level 2* hardware security modules (HSMs) and
+only when in use. Otherwise, key material is encrypted and stored in
+durable persistent storage.
+
+Key material that AWS KMS generates for KMS keys never leaves the
+boundary of AWS KMS HSMs unencrypted. It is not exported or transmitted
+in any AWS KMS API operations.
+
+=== Identity and Access Management
+
+==== Key policies
+
+Key policies is a type of resource-based policy and is the primary way
+to control access to KMS keys.
+
+==== Using ABAC for AWS KMS
+
+Customer can use ABAC to configure conditions for policies based on
+resource tag. Additionally, customer can use `kms:RequestAlias` or
+`kms:ResourceAliases` to control access to KMS based on KMS key alias -
+which can be used when changing KMS key without changing alias or for
+multi-region keys
+
+==== Grants
+
+A grant is a policy that allows AWS principals to use KMS keys in
+cryptographic operations. Each grant allows access to exactly one key.
+You can create a grant for KMS key in a different AWS account. Grant can
+only allow access and not deny
+
+== Using Symmetric and Asymmetric KMS key
+
+In AWS KMS, symmetric KMS key represents a 256-bit encryption key that
+never leaves KMS.
+
+Asymmetric keys represent mathematically related public key and private
+key pair. Public key can be extracted from KMS and shared with anyone,
+while private key never leaves AWS KMS unencrypted. AWS KMS supports 2
+types of asymmetric keys:
+
+* RSA KMS keys: Can be used for encryption and decryption, or signing
+and verification (but not both)
+* Elliptic Curve (ECC) KMS key: ECC key pair used for signing and
+verification
+
+=== Selecting key usage
+
+[cols=",,",options="header",]
+|===
+|Key Type |Encrypt and Decrypt |Sign and Verify
+|Symmetric |Yes |No
+|Asymmetric with RSA Key pairs |Yes |Yes
+|Asymmetric with ECC Key pairs |No |Yes
+|===
+
+Usage:
+
+* Encrypt and decrypt: typically can use Symmetric KMS key
+* Sign and verify: Must use asymmetric KMS key
+* Public key encrypt and decrypt: Must use Asymmetric KMS key with RSA
+key pair
+* Use with integrated AWS services: Must use Symmetric KMS keys
+
+=== Notes about encryption
+
+* Customer can use KMS directly if the data is smaller than 4KB
+* Customer must generate and use data key if data is larger than 4KB
+
+== Multi-region keys
+
+KMS supports multi-region keys, which are KMS keys in different AWS
+regions that can be used interchangeably. Each set of related
+multi-region keys has the same key material and key id, so you can
+encrypt data in one AWS region and decrypt it in a different AWS region.
+Multi-region keys are useful for:
+
+* Disaster recovery: Let you process encrypted data without interruption
+in event of AWS region outage.
+* Global data management: Globally distributed data that is available
+consistently across AWS regions
+* Distributed signing applications: Applications that requires
+cross-region signature capabilities
+* Active-active applications that span multiple regions
+
+To setup multi-region keys, customer needs to setup the primary key and
+replica keys.
+
+During rotation:
+
+* When KMS synchronizes multi-region keys, it copies the key rotation
+property from primary key to all of its related replica keys
+* When KMS rotates key material, it creates new key material for primary
+key and copies new key material across region boundaries to all related
+replica keys. The key material never leaves KMS unencrypted.
+* KMS does not encrypt any data with new key material until key material
+is available in the primary key and every one of its replica keys

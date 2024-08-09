@@ -1,0 +1,226 @@
+= AWS Elastic Block Store
+
+AWS Elastic Block Store provides block-level storage for use with xref:aws_elastic_compute_cloud.adoc[EC2] instances.
+
+EBS is recommended for data that must be quickly accessible and requires long-term persistence.
+
+EBS volumes are replicated and accessible within one Availability Zone.
+Failure of an AZ means failure of a volume.
+
+xref:#_ebs_volume_types[EBS volumes can have multiple types] that have different performance characteristics.
+
+EBS volumes can be backed up to xref:aws_simple_storage_service.adoc[S3] using point-in-time xref:#_ebs_snapshot[].
+Snapshots are incremental, and Snapshot restore lazily in the background.
+You can use Amazon Data Lifefycle Manager to automate creation, retention and deletion of EBS snapshot and EBS-backed xref:amazon_machine_image.adoc[AMI].
+
+For security, EBS supports encryption-at-rest though integration with xref:aws_key_management_system.adoc[KMS].
+EBS encryption is supported by all EBS volume types and with no IOPS performance degradation.
+The encryption happens transparently, without the operating system knowing about the encryption.
+
+For performance, EBS can be setup for RAID 0 configuration to increase I/O performance while having persistent data.
+Other RAID configurations (such as RAID 1, RAID 5, RAID 6) are not recommended because EBS volume data is already replicated in multiple servers.
+
+[#_ebs_volume_types]
+== EBS Volume Types
+
+=== SSD volumes
+
+==== Overview and comparison
+
+* General Purpose SSD volumes (`gp2` and `gp3`): Balance price and performance for a wide variety of transactional workloads.
+* Provisioned IOPS SSD volumes (`io1` and `io2`): Designed to meet I/O-intensive workloads that are sensitive to storage performance and consistency.Provides a consistent IOPS rate that can predictably scale to tens of thousands of IOPS per instance.
+
+[cols="6",options="header",]
+|===
+|Volume Type |gp3 |gp2 |io2 Block Express |io2 |io1
+|Durability |99.8% - 99.9% |99.8% - 99.9% |99.999% |99.999% |99.8% -
+99.9%
+
+|Volume size |1 GiB - 16 TiB |1 GiB - 16 TiB |4 GiB - 64 TiB |4 GiB - 16
+TiB |4 GiB - 16 TiB
+
+|Maximum I/O size |256 KiB |256 KiB |256 KiB |256 KiB |256 KiB
+
+|Max IOPS per volume (16 KiB I/O) |16,000 |16,000 |256,000 |64,000
+|64,000
+
+|Max throughput per volume |1,000 MiB/s |128MiB/s (volume < 170 GiB) 250
+MiB/s (volume > 170 GiB) |4,000 MiB/s |1,000 MiB/s |1,000 MiB/s
+
+|Multi-attach |No |No |Yes |Yes |Yes
+
+|Boot volume |Yes |Yes |Yes |Yes |Yes
+|===
+
+==== General Purpose SSD - `gp3`
+
+Offers cost-effective storage that is ideal for a broad range of workloads.
+
+Delivers consistent baseline rate of 3,000 IOPS and 125 MiB/s with additional provisioned IOPS (up to 16,000) and throughput (up to 1,000 MiB/s).
+
+Maximum ratio of provisioned IOPS to provisioned volume size is 500 IOPS per GiB.
+
+Maximum ratio of provisioned throughput to provisioned IOPS is .25 MiB/s per IOPS.
+
+==== General Purpose SSD - `gp2`
+
+Offers cost-effective storaget that is ideal for broad range of workload.
+Delivers single-digit millisecond latencies and ability to burst to 3,000 IOPS for extended periods of time.
+
+===== I/O Credits and burst performance
+
+Performance of `gp2` volume is tied to its volume size, which determines baseline performance level of volume and how quickly it accumulates I/O credits.
+
+Each new volume receives an initial I/O credit balance of 5.4 million, which is enough to sustain maximum burst of performance of 3000 IOPS for at least 30 minutes.
+
+Volumes earn I/O credits at baseline performance rate of 3 IOPS per GiB of volume size with *a minimum baseline performance of 100 IOPS*.
+When a volume requires more than baseline performance I/O level, it draws on credit balance to burst to maximum of 3,000 IOPS.
+When volume uses fewer I/O credits than it earns, unused I/O credits are added to I/O credit balance.
+
+[cols="5",options="header",]
+|===
+|Volume size (GiB) |Note |Baseline performance (IOPS) |Burst duration
+with sustained 3,000 IOPS |Seconds to fill empty credit balance with no
+IO
+|1 - 34 |Below minimum IOPS |100 |1802 |54000
+
+|334 |Min size for max throughput |1002 |2703 |5389
+
+|1000 |Min size for baseline burst |3000 |N/A |N/A
+
+|5334 |Min size for max IOPS |16000 |N/A |N/A
+
+|16384 |Max volume size |16000 |N/A |N/A
+|===
+
+==== Provisioned IOPS SSD
+
+Provisioned IOPS SSD volumes are designed to meet the needs of I/O-intensive workloads
+
+=== HDD volumes
+
+* Throughput-Optimized HDD volumes (`st1`): Low-cost magnetic storage that ideal for sequential workloads such as Amazon EMR, ETL, data warehouses
+* Cold HDD volumes (`sc1`): Lowest-cost magnetic storage that are ideal for large, sequential, cold-data workloads (infrequent access)
+
+[width="100%",cols="3",options="header",]
+|===
+|Volume type |st1 |sc1
+|Durability |99.8% - 99.9% |99.8% - 99.9%
+
+|Volume size |125 GiB - 16 TiB |125 GiB - 16 TiB
+
+|Maximum I/O size |1,024 KiB |1,024 KiB
+
+|Max IOPS per volume |500 |250
+
+|Max throughput per volume (1 MiB I/O) |500 MiB/s |250 MiB/s
+
+|Multi-attach |No |No
+
+|Boot volume |No |No
+
+|Use case |Frequently-accessed, throughput-intensive workloads
+|Infrequently-accessed data
+|===
+
+==== Throughput Optimized HDD - `st1`
+
+Throughput optimized HDD provide low-cost magnetic storage that defines performance in terms of throughput rather than IOPS.
+Good fit for
+*frequently-accessed*, *large, sequential workloads* such as EMR, ETL, etc.
+
+Performance of `st1` is similar to `gp2` in that it also uses burst-bucket model for performance.
+Volume size determines baseline throughput of volume at rate of 40 MiB/s per TiB, with a burst to 250 MiB/s per TiB.
+The credit capacity is 1 TiB credit per TiB sotrage
+
+[cols=",,,",options="header",]
+|===
+|Volume Size (TiB) |Base throughput |Burst throughput |Notes
+|0.125 |5 |31 |
+|0.5 |20 |125 |
+|1 |40 |250 |
+|2 |80 |500 |Minimum size for max burst throughput
+|12.5 |500 |500 |Minimum size for max throughput
+|16 |500 |500 |Maximum size
+|===
+
+==== Cold HDD volumes - `sc1`
+
+Cold HDD provides low-cost magnetic storage that is a good fit for
+*large, sequential workload* that are *infrequently-accessed*
+
+Performance of `sc1` is similar to `gp2` in that it also uses burst-bucket model for performance.
+Volume size determines baseline throughput of volume at rate of 12 MiB/s per TiB, with a burst to 80 MiB/s per TiB.
+The credit capacity is 1 TiB credit per TiB storage.
+
+[cols="4",options="header",]
+|===
+|Volume Size (TiB) |Base throughput |Burst throughput |Notes
+
+|0.125
+|1.5
+|10
+|
+
+|0.5
+|6
+|40
+|
+
+|1
+|12
+|80
+|
+
+|2
+|24
+|160
+|
+
+|3.125
+|37.5
+|250
+|Minimum size for max burst throughput
+
+|16
+|192
+|250
+|Maximum size
+|===
+
+[#_ebs_snapshot]
+== EBS Snapshot
+
+You can backup data on EBS volumes to xref:aws_simple_storage_service.adoc[]
+by taking point-in-time snapshots
+
+Snapshots are _incremental_, meaning only blocks that changed are saved, which minimizes the time required to create snapshot and saves on storage cost by not duplicating data.
+
+When creating an EBS volume based on a snapshot, the new volume begins as an exact replica of the original volume that was used to create the snapshot.
+The replicated volume loads data in the background so that you can begin using it immediately.
+If you access data that hasn’t been loaded yet, the volume immediately downloads the requested data from S3 then continuing loading the rest of volume’s data in the background.
+
+Snapshot deletion process is designed so that you need to retain only the most recent snapshot in order to create volume.
+Unique data is only deleted from sequence of snapshots if all snapshots that reference the unique data is deleted.
+
+=== Amazon Data Lifecycle Manager
+
+You can use Amazon Data Lifecycle Manager to automate creation, retention and deletion of EBS snapshot and EBS-backed xref:amazon_machine_image.adoc[AMI].
+
+=== Fast snapshot restore
+
+Amazon EBS Fast Snapshot Restore enable you to create a volume from a snapshot that is fully *initialized* at creation, eliminating the latency of I/O operations on a block when it is accessed for the first time.
+Volumes created using fast snapshot restore instantly deliver all of their provisioned performance.
+
+FSR is enabled for specific snapshots in specific Availability Zones.
+
+FSR is limited to 50 fast snapshot restore per region.
+
+The number of volumes that receive full performance benefit of FSR is determined by volume creation credits for the snapshot.
+There is one credit bucket per snapshot per AZ
+
+Size of credit bucket is calculated as follows:
+`MAX (1, MIN (10, FLOOR (1024 / snapshot_size_gb)))`
+
+Refill rate is calculated as follow:
+`MIN (10, FLOOR (1024 / snapshot_size_gb))` per hour
