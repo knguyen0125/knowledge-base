@@ -1,0 +1,61 @@
+= AWS Glue
+
+_AWS Glue_ is a serverless, regional, managed ETL service that is simple and cost-effective to categorize data, clean and enrich data, and move it reliably between various data stores and data streams.
+
+AWS Glue is designed to work with semi-structured data using dynamic dataframe which you can use in ETL scripts.
+A dynamic data frame is similar to xref:apache_spark.adoc[] dataframe, except that each record is self-describing so no schema is required initially.
+With dynamic frames, you get schema flexibility and a set of advanced transformations specifically designed for dynamic data frames.
+
+== AWS Glue Data Sources
+
+* Data Store:
+** xref:aws_simple_storage_service.adoc[]
+** xref:amazon_relational_database_service.adoc[]
+** JDBC-accessible databases
+** xref:aws_dynamodb.adoc[]
+** MongoDB and DocumentDB
+* Data Streams
+** xref:amazon_kinesis.adoc#_kinesis_data_streams[Kinesis Data Streams]
+** xref:apache_kafka.adoc[]
+
+== AWS Glue Data Targets
+
+* S3
+* RDS
+* JDBC-accessible database
+* MongoDB and Amazon DocumentDB
+
+image::AWS Glue Flow.png[]
+
+== Concepts
+
+* Jobs: accomplish the work that’s required to extract, transform, and load (ETL) data from a data source to a data target
+* For data store sources, define a crawler to populate AWS Glue Data Catalog with metadata table definitions.
+** For streaming sources, data catalog must be manually defined
+* AWS Glue can generate script to transform data
+* Run job on demand or set it up to start when a specified trigger occurs.
+Trigger can be a time-based schedule or an event
+
+== Terminology
+
+* AWS Glue Data Catalog: Persistent metadata store in AWS Glue.
+Contains table definitions, job definitions, and other control information to manage AWS Glue environment
+** Each AWS account has one AWS Glue Data Catalog, per region
+* Classifier: Determines schema of data.
+AWS Glue provides classifiers for common data type and common relational database systems.
+Additionally, user-provided classifier can be specified
+* Connection: Properties that are required to connect to a data store
+* Crawler: A program that connects to a data store, progresses through prioritized list of classifier to determine schema for data and create metadata tables in AWS Glue Data Catalog
+* Database: A set of associated table definitions organized into logical group
+* Data store: Repository for persistently storing data
+* Data source: Data store that is used as input to process or transform
+* Data source: Data store that process or transform writes to
+* Development endpoint: Environment that you can use to develop and test AWS Glue ETL scripts
+* Dynamic Frame: Distributed table that supports nested data.
+Each record is self-describing, designed for schema flexibility with semi-structured data
+* Job: Business logic that is required to perform ETL work.
+Composed of transformation script, data source and data target.
+Job run are initiated by triggers that can be scheduled or triggered by events
+* Notebook server: Web-based environment that you can use to run PySpark statements
+* Script: Code that perform ETL
+* Table: Metadata definition that represents your data

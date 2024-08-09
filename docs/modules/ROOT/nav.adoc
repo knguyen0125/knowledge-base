@@ -45,6 +45,7 @@
 ** xref:amazon_quicksight.adoc[]
 ** xref:amazon_elastic_mapreduce.adoc[]
 ** xref:amazon_kinesis.adoc[]
+** xref:aws_glue.adoc[]
 
 * Orchestration Platform
 ** xref:kubernetes.adoc[]
@@ -83,3 +84,4 @@
 ** xref:aws_backup.adoc[]
 ** xref:aws_directconnect.adoc[]
 ** xref:aws_transit_gateway.adoc[]
+** xref:aws_organizations.adoc[]

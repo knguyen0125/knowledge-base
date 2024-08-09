@@ -1,0 +1,17 @@
+= AWS Nitro Enclaves
+
+AWS Nitro Enclaves is an xref:aws_elastic_compute_cloud.adoc[] feature that allows customers to create isolated execution environments (enclaves) from EC2 instance to perform compute on sensitive data, such as personally identifiable information.
+
+Nitro Enclaves only provide secure local socket connectivity between the enclaves and its parent instance, with no persistent storage, external networking or interactive access.
+Users cannot SSH into the enclave, and data and applications within the enclave cannot be accessed from parent instance.
+
+Nitro Enclave supports attestation feature, which allows the enclave’s identity and only authorized code is running inside it.
+
+CPU and Memory is isolated from parent instance and other instances by splitting the CPU and memory from parent instance and create another virtual machine
+
+Nitro Enclaves are only supported Nitro-based instances with at least 4 vCPUs, and is running in Linux operating system only
+
+== Connecting to Enclave
+
+When running AWS Nitro Enclaves, a `vSock` socket is created between the enclave and parent instance.
+Enclaves can only communicate with parent instance via this socket.

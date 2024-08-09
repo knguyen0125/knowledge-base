@@ -1,0 +1,72 @@
+= AWS Organizations
+
+AWS Organizations is an account management service that consolidate multiple AWS accounts into an organization.
+
+Feature of AWS organizations:
+
+* Centralized management of all AWS accounts
+* Consolidated billing for all member accounts
+* Hierarchical grouping of account to meet budgetary, security or compliance needs
+* Policies to centralize control over AWS services and API actions that each account can access
+* Policies to standardize tags across resources in accounts
+* Policies to control how AWS Artificial Intelligence and machine learning services can collect and store data
+* Policies that configure automatic backups for resources in organization’s accounts
+
+== Terminology
+
+* Organization: An entity that consolidate AWS accounts so that you can administer them as a single unit.
+* Root: Parent container for all accounts in organization
+* Organization Unit (OU): A container for accounts within a root.
+An OU can contain other OUs
+* AWS account: A standard account that contains AWS resources and identities that can access those resources
+** Management account: Account used to create organization.
+Has responsibility of a payer account and is responsible for paying all charges that are accrued by member accounts
+** Member accounts: other accounts in an organization
+* Invitation: Process of asking another account to join organization.
+* Handshake: a multi-step process of exchanging information between parties.
+Serve as the underlying implementation for invitations.
+* Service Control Policy: A policy that specifies services and actions that users and roles can use in accounts
+** Allow list strategy: Explicitly specify access that is allowed.
+All other access is implicitly blocked.
+*** By default, there is a managed AWS SCP called `FullAWSAccess` that allow all permissions by default.
+To use Allow list strategy, customer need to remove `FullAWSAccess` policy with one that allow more limited set of permissions.
+**** You cannot add permissions at lower level because SCP never grant permissions, only filters them
+** Deny List strategy: Leave `FullAWSAccess` in place, but attach additional policies that explicitly deny access to unwanted services and actions.
+
+== Service Control Policies
+
+A policy document attached to Organization as a whole (attach to root), or to OU, or to individual AWS Accounts, to control maximum available permissions for all accounts in organization.
+
+____
+SCP don’t affect member or roles of management account
+____
+
+SCP defines account permissions boundary (limit what the account itself can do - *including root user*) can do.
+SCP by itself don’t grant permission.
+Only permissions allowed by both SCP and Identity-based Policies in accounts are in effect.
+
+SCP inherits from tree to account.
+For a service to be enabled in one account, all SCPs from root to parent OUs must enable that service.
+
+*SCP do not affect any service-linked role.*
+
+____
+For allow action, the only valid resource is “*”, and no condition can be specified
+____
+
+== Policy Inheritance
+
+=== Service Control Policy Inheritance
+
+Inheritance for service control policies behaves like a filter through which permissions flow to all parts of tree below.
+To allow AWS service API at the member account level, you must allow API at every level between the member account and the root of organization.
+
+SCP do not support inheritance operator that alter how elements of policy are inherited by child OUs and accounts.
+
+=== Management policy inheritance
+
+Management policy can be AI services opt-out policies, backup policies and tag policies.
+
+Syntax for management policy types includes inheritance operator, enable you to specify fine granularity what elements from parent policies are applied and what elements can be overridden or modified when inherited by child OUs and accounts.
+
+Effective policy is set of rules that are inherited by root and OU along with those directly attached to account.

@@ -1,0 +1,29 @@
+= AWS Private Link
+
+AWS PrivateLink allows you to privately connect xref:aws_virtual_private_cloud.adoc[VPC] to supported AWS services or services hosted by AWS accounts without exposing VPC to the public internet
+
+== Concepts
+
+* VPC endpoint: Entrypoint in VPC that enables you to connect privately to a service.
+* Endpoint service: Your own application or service in your VPC.
+Other AWS principals can create an endpoint from their VPC to endpoint service.
+
+== Types of VPC Endpoints
+
+=== Interface endpoints
+
+Interface endpoints is ENI with a private IP address, serve as an entry point for traffic destined to a supported AWS service.
+
+=== Gateway Load Balancer endpoints
+
+xref:aws_elastic_load_balancing.adoc#_gateway_load_balancer[Gateway Load Balancer] endpoint is ENI with a private IP address that serves as an entry point to intercept traffic and route it to a service configured using Gateway Load Balancers
+
+=== Gateway endpoints
+
+You can set up gateway endpoints to provide access to S3 or DynamoDB
+
+== Controlling access to VPC endpoints
+
+VPC Endpoint policy is IAM resource policy that controls access to VPC endpoints.
+
+Security groups can be attached to VPC Endpoint ENI
