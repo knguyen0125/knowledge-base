@@ -1,0 +1,7 @@
+= Apache Spark
+
+Apache Spark is a distributed processing system used for big data workloads. It provides development APIs in Java, Scala, Python and R. It can run in xref:apache_hadoop.adoc[] clusters through Yet Another Resource Negotiator, or standalone.
+
+Apache Spark is created to address the limitations of MapReduce, which is the sequential multi-step process it takes to run a job. With each step, MapReduce reads data from cluter, performs operations, and write results back to HDFS. This makes MapReduce slower due to latency of disk I/O. Apache Spark address this limitation by doing processing in-memory, reducing number of steps in a job and reusing data across multiple parallel operations.
+
+Apache Spark can process data in HDFS, Apache HBase, Cassandra, xref:apache_hive.adoc[].

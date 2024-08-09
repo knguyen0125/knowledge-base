@@ -1,0 +1,195 @@
+= Amazon Route53
+
+Amazon Route 53 is a highly available DNS service.
+You can use Route 53 for the following functionalities
+
+* Register domain names
+* Route internet traffic to the resources for your domain
+* Check the health of resources
+
+== Concepts
+
+=== Domain Registration Concepts
+
+* Domain Name
+* Domain Registrar: A company accredited by ICANN to process domain registrations for specific TLDs
+** For example, Amazon Registrar can process domain registration for .com, .net, .org
+* Domain registry: A company that own the right to sell domains that have a specific TLD.
+** For example, VeriSign owns the right to sell domains that have a .com TLD
+* Domain reseller: Company that sells domain name for registrars
+* Top-level domain
+** Generic TLD
+** Geographic TLDs
+
+=== DNS concepts
+
+* Alias record: A Type of record that you can create with Route 53 to route traffic to AWS resources
+* Authoritative Name Server: A name server that has definite information about one part of the DNS and that responds to requests from a DNS resolvers by returning the applicable information.
+** Route 53 name servers are authoritative name servers for every domain that uses Route 53 as the DNS service.
+Name server knows how you want to route traffic for your domain and subdomains based on records that created in hosted zone
+* DNS Query
+* DNS Resolver: Resolver communicates with DNS name servers to get the IP address for the corresponding resource such as a webserver.
+** Also known as a recursive name server because it sends requests to a sequence of authoritative DNS name servers until it gets the response.
+* Hosted Zone: A container for records which include information about how you want to route traffic for a domain and all of its subdomains.
+** Public hosted zone: Route internet traffic to resoruces
+** Private hosted zone: Route traffic within the VPC
+* Name servers: Servers in DNS that help to translate domain names into IP addresses that computer uses to communicate with one another
+* Private DNS: Local version of DNS that lets you route traffic for a domain and its subdomain to EC2 instances within one or more VPCs
+* Records: Object in hosted zone that you use to define how you want to route traffic for the domain or subdomain
+* Reusable delegation set: A set of 4 authoritative name servers that you can use with more than one hosted zone.
+By default, Route 53 assigns a random selection of name servers to each new hosted zone.
+* Routing policy: Settings for records that determine how Route 53 responds to queries
+** Simple routing policy
+** Failover routing policy
+** Geolocation routing policy
+** Geoproximity routing policy
+** Latency routing policy
+** Multivalue answer routing policy
+** Weighted routing policy
+* TTL: Amount of time in seconds that you want DNS resolver to cache the values for a record
+
+=== Health checking concepts
+
+* DNS failover: Routing traffic away from unhealthy resources and to healthy resources
+* Endpoint: the resource that you configure a health check to monitor the health of
+* Health check: A Route 53 component that monitor an endpoint is healthy, can notify when it is not and can configure DNS failover
+
+== Using Route 53 as DNS
+
+=== Type of records
+
+[width="100%",cols="2",options="header",]
+|===
+|Type of record |Description
+|NS (Name Server) |Specifies which name servers are authoritative for a
+domain or a subdomain
+
+|SOA (Start of Authority) |Stores information about domains and is used
+to direct how a DNS zone propagates to secondary name servers
+
+|A |Used to map a domain name to IPv4 address
+
+|AAAA |Used to map a domain name to IPv6 address
+
+|CNAME (Canonical Name) |Alias that points to another domain or
+subdomain, but never an IP address
+
+|MX (Mail Exchange) |Map where to deliver email for a domain
+
+|TXT |Allows adding limited human and machine-readable notes that can be
+used for things such as email validation, site, ownership, etc.
+
+|SRV (Service) |Allows services such as VoIP to be directed to a
+separatate host and port location
+
+|SPF (Sender policy framework) |Helps prevent email spoofing and limits
+spammer
+
+|PRT (Pointer) |Reverse A and AAAA records, map IP addresses to Domain
+Name. Can’t exist in the same zone as other DNS record types
+
+|Alias Records |Route 53-specific extension to DNS, allows routing
+traffic to selected AWS resources
+|===
+
+=== Routing policy
+
+[width="100%",cols="3",options="header",]
+|===
+|Routing policy |Description |Public or Private
+|Simple |No special Route 53 routing Can specify multiple values in a
+record |Private and Public
+
+|Failover |Route traffic to a resource when resource is healthy or a
+different resource when first resource is unhealthy. |Private and public
+
+|Multivalue Answer |Configure multiple value. |Private and public
+
+|Weighted |Associate multiple resources with a single domain name or
+subdomain name. |Private and public
+
+|Geolocation |Lets you choose the resources that serve traffic based on
+geographic location of users. |Public only
+
+|Geoproximity |Route traffic based on location of resources and shift
+traffic from resources in one location to resources in another |Public
+only
+
+|Latency-based |Serve requests from AWS Region that provide lowest
+latency |Public Only
+|===
+
+=== Latency vs Geolocation vs Geoproximity
+
+[width="100%",cols="4",options="header",]
+|===
+| |Latency |Geoproximity |Geolocation
+
+|Definition
+|Route 53 serve user requests from AWS Region that provides
+the lowest latency. Based on latency measurements performed over a
+period of time, and measurements reflect changes in network connectivity
+and routing
+|Route traffic based on geographic location of users and
+resources Can optionally choose to route more or less traffic by a bias
+which shrinks or expands the size of geographic region
+|Serve traffic
+based on geographic location of users
+
+|How it works
+|Create latency records for resources in multiple AWS
+regions. When Route 53 receives a DNS query, it determines which AWS
+Regions that created latency records for, determine which gives lowest
+latency and select a latency record in that region
+|Use Route 53 Traffic
+Flow. Create traffic flow policy for resource with one of these values
+With AWS resource: Set the AWS Region where resource is created Non-AWS
+Resource: Latitude and longitude of resource
+|Mapping IP addresses to
+locations. Can create a default record that handle queries from IP
+address that aren’t mapped
+
+|Resource in multiple AWS regions
+|Route traffic based on location of
+resources
+|Route traffic based on location of users (localize content,
+restrict distributions, etc.)
+|
+|===
+
+== Using Route 53 Health Checks
+
+Route 53 health checks monitor the health and performance of applications and other resources
+
+Types of Route 53 health checks:
+
+* Monitor and endpoint: Monitor and endpoint that is either IP address or domain name.
+* Monitor other health check (calculated health checks): Monitor whether Route 53 heal checks.
+* Useful when multiple resources are performing the same function, and chief concern is whether some minimum number of resources are healthy
+* Monitor CloudWatch alarms
+* Application Recovery Controller
+
+DNS Failover
+
+* Active-Active failover: Route 53 exclude resources that is unhealthy.
+* Can be configured with any routing policy
+* Active-Passive failover: Route 53 includes only healthy primary resources.
+If all primary resources are unhealthy, Route 53 begins to include only healthy secondary resources
+* Can be configured only using failover routing policy
+
+== Amazon Route53 Resolver
+
+Route53 Resolver is automatically created with VPC to answer DNS queries for local VPC domain names and records in private hosted zones.
+For all other domain names, Resolver performs recursive lookups against public name servers.
+
+Resolvers additionally contains endpoints to answer DNS queries to and from your networks, which is any network that is reachable from your VPC.
+
+=== Route 53 Resolver endpoints
+
+Inbound endpoint: DNS Resolvers on network can forward DNS queries to Route 53 Resolver via this endpoint
+
+image::route-53-resolver-inbound.png[]
+
+Outbound endpoint: Resolver conditionally forwards queries to resolver on your network via this endpoint.
+
+image::route-53-resolver-outbound.png[]

@@ -1,0 +1,9 @@
+= Apache Hive
+
+Apache Hive is a distributed, fault-tolerant data warehouse system that enables analytics at a massive scale. Apache Hive allows uses to read, write and manage petabytes of data using SQL
+
+Hive is built on top of xref:apache_hadoop.adoc[]
+
+Traditional relational databases are designed for interactive queries on small to medium datasets and do not process huge datasets. Hive instead uses batch processing so that it works quickly across a large distributed database.
+
+Hive can query data stored in distributed storage solutions such as Hadoop Distributed File System and xref:aws_simple_storage_service.adoc[S3]. Hive stores its database and table metadata in Hive metastore

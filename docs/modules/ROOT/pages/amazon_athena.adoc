@@ -1,0 +1,16 @@
+= Amazon Athena
+
+Amazon Athena is a serverless query service that makes it easy to
+analyze data directly from xref:aws_simple_storage_service.adoc[S3] using
+standard SQL. Under the hood, Athena uses xref:presto.adoc[].
+
+Athena integrates directly with xref:amazon_quicksight.adoc[]
+for easy data visualization. Athena also integrates with [[Glue Data
+Catalog]] to create tables and query data in Athena based on a central
+metadata store.
+
+Athena supports a wide variety of data formats such as CSV, JSON, ORC,
+Avro or Parquet.
+
+Athena supports partitioning to reduce amount of data scanned by each
+query, improving performance and reduce cost.

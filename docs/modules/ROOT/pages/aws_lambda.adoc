@@ -12,7 +12,7 @@ Lambda scales functions based on concurrency and have an "all-function cumulativ
 
 Lambda function can be configured to run in xref:aws_virtual_private_cloud.adoc[] to access resources such as Database, Cache instance or other internal services. AWS Lambda creates an Elastic Network Interface|ENI for each subnet in Lambda function VPC configuration.
 
-Lambda function can also mount an AWS Elastic File System (SEED)|EFS to a local directory to provide persistent, shared storage.
+Lambda function can also mount an xref:aws_elastic_file_system.adoc[EFS] to a local directory to provide persistent, shared storage.
 
 Lambda function can be extended using Lambda extensions to augment Lambda functions such as Application Performance Monitoring|APM, Security or Governance.
 

@@ -12,7 +12,7 @@ AWS Nitro System contains the following components:
 * Nitro Card for xref:aws_elastic_compute_cloud.adoc#_instance_store[Instance Store]: Allow connections to SDD/HDD directly attached to AWS physical servers
 * Nitro Card controller: Coordinate Nitro Cards, Nitro Hypervisor and Nitro Security Chip
 
-This Nitro System allows AWS to innovate faster and allow it to provide new features such as 100 Gbps networking or xref:aws_elastic_fabric_adapter.adoc[] to instances, as well as allow support for different architecture (ARM or AMD) faster
+This Nitro System allows AWS to innovate faster and allow it to provide new features such as 100 Gbps networking or xref:elastic_fabric_adapter.adoc[] to instances, as well as allow support for different architecture (ARM or AMD) faster
 
 == Related
 

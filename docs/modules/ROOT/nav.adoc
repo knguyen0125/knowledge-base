@@ -33,6 +33,15 @@
 ** Terraform
 *** Terragrunt
 
+* Analytics
+** xref:apache_hive.adoc[]
+** xref:apache_hadoop.adoc[]
+** xref:apache_spark.adoc[]
+** xref:presto.adoc[]
+** xref:amazon_athena.adoc[]
+** xref:amazon_quicksight.adoc[]
+** xref:amazon_elastic_mapreduce.adoc[]
+
 * Orchestration Platform
 ** xref:kubernetes.adoc[]
 *** xref:aws_elastic_kubernetes_service.adoc[]
@@ -47,18 +56,21 @@
 ** xref:aws_elastic_load_balancing.adoc[]
 ** xref:amazon_cloudfront.adoc[]
 ** xref:aws_certificate_manager.adoc[]
+** xref:amazon_route53.adoc[]
 
 * AWS Services
 ** xref:amazon_api_gateway.adoc[]
 ** xref:aws_auto_scaling.adoc[]
 ** xref:aws_elastic_compute_cloud.adoc[]
 *** xref:aws_nitro_system.adoc[]
-*** xref:aws_elastic_fabric_adapter.adoc[]
+*** xref:elastic_fabric_adapter.adoc[]
 *** xref:amazon_machine_image.adoc[]
 ** xref:aws_virtual_private_cloud.adoc[]
 ** xref:aws_lambda.adoc[]
-** xref:aws_simple_storage_service.adoc[]
 ** xref:aws_key_management_system.adoc[]
 ** xref:amazon_cloudwatch.adoc[]
 ** xref:aws_cloudtrail.adoc[]
 ** xref:aws_identity_and_access_management.adoc[]
+** xref:aws_elastic_block_store.adoc[]
+** xref:aws_elastic_file_system.adoc[]
+** xref:aws_simple_storage_service.adoc[]

@@ -235,7 +235,7 @@ Currently, there are 2 mechanisms for using enhanced networking:
 
 === Elastic Fabric Adapter
 
-xref:aws_elastic_fabric_adapter.adoc[] provides low-latency, high-thoughput to select EC2 instance types, suitable for HPC applications
+xref:elastic_fabric_adapter.adoc[] provides low-latency, high-thoughput to select EC2 instance types, suitable for HPC applications
 
 == Storage
 

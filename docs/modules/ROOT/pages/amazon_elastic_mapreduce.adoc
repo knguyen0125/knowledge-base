@@ -1,0 +1,54 @@
+= Amazon Elastic MapReduce
+
+Amazon EMR is a platform for running large-scale distributed data processing jobs using open-source analytics frameworks such as xref:apache_spark.adoc[], xref:apache_hive.adoc[] and xref:presto.adoc[]
+
+Amazon Elastic MapReduce is designed to reduce cost of processing large amount of data, using features such as:
+
+* Per-second with a 1 minute minimum billing
+* xref:aws_elastic_compute_cloud.adoc[] Spot instance integration
+* xref:aws_simple_storage_service.adoc[S3] integration with EMR File System, to allow using S3 as a object store for xref:apache_hadoop.adoc[].
+* xref:aws_glue.adoc[] Glue Data Catalog integration: Store external table metadata for xref:apache_spark.adoc[] and xref:apache_hive.adoc[], to persist metadata for external tables on xref:aws_simple_storage_service.adoc[S3] outside of cluster
+
+Amazon Elastic MapReduce can access multiple data stores:
+
+* xref:aws_simple_storage_service.adoc[S3], which allows multiple clusters to process the same data.
+* Hadoop Distributed File System
+* xref:aws_dynamodb.adoc[]
+* xref:amazon_relational_database_service.adoc[]
+* AWS Glacier
+* xref:amazon_redshift.adoc[]
+* AWS Data Pipeline
+
+== Architecture (on EC2)
+
+The central component of Amazon Elastic MapReduce is the cluster.
+A cluster is a collection of xref:aws_elastic_compute_cloud.adoc[] instances.
+Each instances (node) has a different node type:
+
+* Master node: A node that manages the cluster by running software components to coordinate distribution of data and tasks among other nodes; tracks status of tasks and monitor the health of the cluster.
+Every cluster has a master node, and it’s possible to create a single-node cluster with only master node.
+* Core node: node with software that run tasks and store data in
+HDFS
+. Multi-node clusters have at least one core node.
+* Task node: node that only run tasks and does not store data in
+HDFS
+
+Each cluster can be a long-lived cluster, or a transient cluster (terminates after job finishes).
+By default, the cluster termination policy is after last ``step'' execution, but can be changed to terminate after idle or manually terminate
+
+Amazon Elastic MapReduce consists of several layers to provide capabilities and functionalities to the cluster.
+
+* Storage layer: utilizes different file systems
+** HDFS
+** EMR File System
+** Local file system
+* Cluster resource management layer: manages cluster resources and scheduling jobs for processing data
+** By default, EMR uses Yet Another Resource Negotiator to centrally manage cluster resources for multiple data-processing frameworks.
+** Because EMR integrates with spot instance, EMR only allows application master processes to run on core node.
+The application master processes controls running jobs and needs to stay alive for the life of the job.
+* Data processing framework layer: provides the engine to process the data. The main processing framework for EMR are MapReduce and xref:apache_spark.adoc[]
+
+Amazon Elastic MapReduce also integrates with xref:aws_step_function.adoc[] to provide end-to-end analytics experience.
+
+In addition to EMR on xref:aws_elastic_compute_cloud.adoc[EC2], we can also run EMR on xref:aws_elastic_kubernetes_service.adoc[] or using serverless offerings.
+With EMR on EKS, instead of using Yet Another Resource Negotiator, EMR uses Kubernetes directly, while with serverless option, customers only need to submit jobs to EMR and let EMR handles the rest.

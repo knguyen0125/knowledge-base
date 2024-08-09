@@ -1,0 +1,5 @@
+= Presto
+
+Presto is an open source, distributed SQL] query engine, similar to xref:apache_hive.adoc[]. However, xref:apache_hive.adoc[] is designed for query throughput and queries that requires very large amount of memory, while Presto is designed for low latency (interactive query)
+
+In AWS, xref:amazon_athena.adoc[] utilizes Presto as its querying engine.

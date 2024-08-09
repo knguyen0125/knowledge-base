@@ -1,0 +1,7 @@
+= Amazon QuickSight
+
+Amazon QuickSight is a business intelligence service. Amazon QuickSight works with multiple services, such as xref:amazon_athena.adoc[], xref:aws_simple_storage_service.adoc[S3], xref:amazon_redshift.adoc[].
+
+SPICE is a fast, in-memory store of QuickSight.
+
+QuickSight provides visuals and dashboarding features, as well as using machine learning via ML Insight to provides forecasts.
